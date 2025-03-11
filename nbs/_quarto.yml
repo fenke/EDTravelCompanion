@@ -1,13 +1,14 @@
 project:
   type: website
 
+bibliography: references.bib
+
 format:
   html:
-    theme: cosmo
+    theme: solar
     css: styles.css
     toc: true
-    keep-md: true
-  commonmark: default
+    keep-md: false
 
 website:
   navbar:

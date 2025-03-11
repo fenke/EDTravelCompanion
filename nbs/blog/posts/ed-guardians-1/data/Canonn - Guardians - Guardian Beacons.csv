@@ -1,0 +1,31 @@
+SiteId,System Name,x,y,z,Region,Primary Star,Body Name,Body Sub Type,Distance To Arrival,Guardian Structure System,Guardian Structure Body,Reported By
+1,SYNUEFE IL-N C23-15,658.28125,-117.96875,-46.3125,Inner Orion Spur,G (White-Yellow) Star,2 A,Rocky body,581,SYNUEFE IL-N C23-19,SYNUEFE IL-N C23-19 B 2,joulupunikki
+2,SYNUEFE OF-E B45-4,751.0625,-157.71875,-86.09375,Inner Orion Spur,M (Red dwarf) Star,1 B,Icy body,258,SYNUEFE AH-J D10-103,SYNUEFE AH-J D10-103 B 1,Crimshadow
+3,SYNUEFE QA-E B45-4,738.0625,-174.375,-103.25,Inner Orion Spur,M (Red dwarf) Star,3,High metal content world,348,SYNUEFE PF-E B45-5,SYNUEFE PF-E B45-5 B 2,Crimshadow
+4,SYNUEFE HP-E B45-4,678.59375,-118.75,-94.78125,Inner Orion Spur,M (Red dwarf) Star,4,Icy body,562,SYNUEFE HE-G B44-5,SYNUEFE HE-G B44-5 B 2,Factabulous
+5,IC 2391 SECTOR MX-T B3-6,582.9375,-72.28125,-19.40625,Inner Orion Spur,M (Red dwarf) Star,A 1,Rocky Ice world,210,IC 2391 SECTOR FL-X B1-7,IC 2391 SECTOR FL-X B1-7 A 3,Lex Fernetti
+6,SYNUEFE GJ-G B44-9,747.84375,-109.28125,-121.65625,Inner Orion Spur,M (Red dwarf) Star,3 C,Icy body,579,SYNUEFE ED-I B43-8,SYNUEFE ED-I B43-8 A 2,GURU-951
+7,NGC 2451A SECTOR LX-U D2-25,726.0625,-163.5625,-171.78125,Inner Orion Spur,G (White-Yellow) Star,3,High metal content world,105,NGC 2451A SECTOR VJ-R C4-22,NGC 2451A SECTOR VJ-R C4-22 A 1,Crimshadow
+8,SYNUEFE ZG-J D10-49,723.8125,-156.71875,-152.3125,Inner Orion Spur,K (Yellow-Orange) Star,2 A,Icy body,707,SYNUEFE AH-J D10-20,SYNUEFE AH-J D10-20 A 3,xNicoyax
+9,SYNUEFE RL-C B46-6,727.90625,-157.1875,-67.1875,Inner Orion Spur,M (Red dwarf) Star,3,Icy body,205,SYNUEFE EN-H D11-96,SYNUEFE EN-H D11-96 7 A,SPIDD
+10,SYNUEFE CS-H D11-121,746.09375,-100.78125,-86.625,Inner Orion Spur,G (White-Yellow) Star,3,Water world,795,SYNUEFE ZG-J D10-79,SYNUEFE ZG-J D10-79 B 1,GURU-951
+11,IC 2391 SECTOR HG-X B1-7,604.5625,-101.78125,-58.65625,Inner Orion Spur,M (Red dwarf) Star,4,High metal content world,33,SYNUEFE NB-B B47-10,SYNUEFE NB-B B47-10 B 2,GURU-951
+12,SYNUEFE KU-F B44-4,714.34375,-173.84375,-113.59375,Inner Orion Spur,M (Red dwarf) Star,4,Rocky Ice world,466,SYNUEFE EU-Q C21-15,SYNUEFE EU-Q C21-15 A 1,Steve Arthur
+13,NGC 2451A SECTOR TO-R C4-3,739.46875,-127.875,-156.1875,Inner Orion Spur,T Tauri Star,3,Gas giant with water-based life,380,NGC 2451A SECTOR TO-R C4-10,NGC 2451A SECTOR TO-R C4-10 B 1,Steve Arthur
+14,NGC 2451A SECTOR RT-R C4-19,753.03125,-84.03125,-153.75,Inner Orion Spur,K (Yellow-Orange) Star,2,High metal content world,470,SYNUEFE BE-R C21-35,SYNUEFE BE-R C21-35 E 2,Steve Arthur
+15,SYNUEFE BO-G B44-6,687.3125,-96.75,-112.125,Inner Orion Spur,M (Red dwarf) Star,1 A,Icy body,637,SYNUEFE JP-E B45-4,SYNUEFE JP-E B45-4 C 1,GURU-951
+16,SYNUEFE FU-E B45-5,682.28125,-102.59375,-104.5625,Inner Orion Spur,M (Red dwarf) Star,A 3,High metal content world,54,SYNUEFE BZ-Q C21-11,SYNUEFE BZ-Q C21-11 B 5,GURU-951
+17,SYNUEFE HL-N C23-4,649.9375,-114.78125,-57.0625,Inner Orion Spur,K (Yellow-Orange) Star,2 D,Rocky body,2396,SYNUEFE HP-E B45-8,SYNUEFE HP-E B45-8 D 3,Steve Arthur
+18,SYNUEFE IT-F D12-5,739.46875,-140.53125,-13.375,Inner Orion Spur,T Tauri Star,A 2,High metal content world,196,SYNUEFE EN-H D11-28,SYNUEFE EN-H D11-28 8 B,Nivell
+19,SYNUEFE DK-D B46-12,636.3125,-53.65625,-68.8125,Inner Orion Spur,M (Red dwarf) Star,2,High metal content world,14,SYNUEFE GQ-N C23-21,SYNUEFE GQ-N C23-21 B 3,GURU-951
+20,SYNUEFE JZ-F B44-8,720.625,-163.59375,-112.90625,Inner Orion Spur,M (Red dwarf) Star,8,Class I gas giant,1310,SYNUEFE KZ-F B44-5,SYNUEFE KZ-F B44-5 A 1,Chiggi
+21,SYNUEFE FF-P C22-35,700.03125,-129.5,-96.375,Inner Orion Spur,K (Yellow-Orange) Star,4 A,Icy body,1034,SYNUEFE IE-G B44-2,SYNUEFE IE-G B44-2 A 4,Chiggi
+22,SYNUEFE HA-P C22-22,701.5,-168.125,-104.40625,Inner Orion Spur,T Tauri Star,2,Gas giant with ammonia-based life,1737,SYNUEFE AH-J D10-46,SYNUEFE AH-J D10-46 C 1,Chiggi
+23,IC 2391 SECTOR FG-X B1-9,563.75,-100.03125,-59.3125,Inner Orion Spur,M (Red dwarf) Star,8,Class I gas giant,1035,IC 2391 SECTOR HG-X B1-8,IC 2391 SECTOR HG-X B1-8 C 2,ClusterNuke63
+24,SYNUEFE WL-J D10-113,645.0625,-95.46875,-142.4375,Inner Orion Spur,F (White) Star,3,Class III gas giant,1133,SYNUEFE DJ-G B44-3,SYNUEFE DJ-G B44-3 A 5,Chiggi
+25,SYNUEFE RA-E B45-5,755.53125,-169.125,-88.28125,Inner Orion Spur,M (Red dwarf) Star,2,Icy body,3373,SYNUEFE NU-F B44-5,SYNUEFE NU-F B44-5 B 1,ClusterNuke63
+26,SYNUEFE DK-P C22-35,711.46875,-102.6875,-89.53125,Inner Orion Spur,T Tauri Star,3,Gas giant with water-based life,1112,SYNUEFE EN-H D11-29,SYNUEFE EN-H D11-29 6 B,Nivell
+27,SYNUEFE IJ-G B44-5,790.0625,-124.8125,-120.40625,Inner Orion Spur,M (Red dwarf) Star,3,Class I gas giant,1366,SYNUEFE DZ-Q C21-14,SYNUEFE DZ-Q C21-14 10 A,Chiggi
+28,HIP 36823,640.4375,-143.90625,-118.3125,Inner Orion Spur,K (Yellow-Orange giant) Star,1,Class III gas giant,947,HIP 36781,HIP 36781 A 6 B,ClusterNuke63
+29,SYNUEFE AS-H D11-9,610.3125,-65.125,-101.84375,Inner Orion Spur,K (Yellow-Orange) Star,A 1,High metal content world,492,SYNUEFE DK-D B46-4,SYNUEFE DK-D B46-4 C 1,ArchAngel-7
+30,IC 2391 SECTOR CQ-Y C16,559.875,-87.15625,-33.15625,Inner Orion Spur,T Tauri Star,2,Class I gas giant,1363,IC 2391 SECTOR CA-A D43,IC 2391 SECTOR CA-A D43 12 A,Namix

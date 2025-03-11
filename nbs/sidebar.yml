@@ -1,0 +1,16 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_core.ipynb
+      - section: blog
+        contents:
+          - section: posts
+            contents:
+              - section: ed-guardians-1
+                contents: []
+                href: blog\posts\ed-guardians-1\index.qmd
+        href: blog\index.qmd
+      - section: linalg
+        contents:
+          - linalg\10_linalg_fitsvd.ipynb
