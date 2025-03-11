@@ -415,14 +415,6 @@ The clusters and their  projection on the calculated lines. [edastro link](`{pyt
 :::
 
 
-```{python}
-import matplotlib.pyplot as plt
-
-img = plt.imread("visited-systems-indexedregions.jpg")
-fig, ax = plt.subplots()
-ax.imshow(img)
-```
-
 ### References
 
 
