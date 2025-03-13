@@ -2,80 +2,80 @@
    "markers": [
       {
          "pin": "white",
-         "text": "group 0, distance 120.7\ncentre \t[-5507.89  -539.22 10514.41]\nprojected \t[-5454.1  -470.  10431.4]",
-         "x": -5454.1,
+         "text": "group 0, distance 122.0\ncentre \t[-5507.89  -539.22 10514.41]\nprojected \t[-5453.3  -470.  10430.1]",
+         "x": -5453.3,
          "y": -470.0,
-         "z": 10431.4
+         "z": 10430.1
       },
       {
          "pin": "white",
-         "text": "group 0, distance 42.6\ncentre \t[-9299.73  -405.31  7930.31]\nprojected \t[-9319.4  -427.8  7960.7]",
-         "x": -9319.4,
-         "y": -427.8,
-         "z": 7960.7
+         "text": "group 0, distance 43.7\ncentre \t[-9299.73  -405.31  7930.31]\nprojected \t[-9319.9  -428.2  7961.6]",
+         "x": -9319.9,
+         "y": -428.2,
+         "z": 7961.6
       },
       {
          "pin": "white",
-         "text": "group 0, distance 3091.0\ncentre \t[ 4954.73   158.16 20640.66]\nprojected \t[ 6562.5  -601.3 18112.3]",
-         "x": 6562.5,
-         "y": -601.3,
-         "z": 18112.3
+         "text": "group 0, distance 3100.0\ncentre \t[ 4954.73   158.16 20640.66]\nprojected \t[ 6566.4  -599.7 18103.3]",
+         "x": 6566.4,
+         "y": -599.7,
+         "z": 18103.3
       },
       {
          "pin": "white",
-         "text": "group 0, distance 2007.2\ncentre \t[ 1232.51  -702.14 12331.89]\nprojected \t[  156.8  -531.3 14017.8]",
-         "x": 156.8,
-         "y": -531.3,
-         "z": 14017.8
+         "text": "group 0, distance 2001.9\ncentre \t[ 1232.51  -702.14 12331.89]\nprojected \t[  160.6  -530.6 14013.9]",
+         "x": 160.6,
+         "y": -530.6,
+         "z": 14013.9
       },
       {
          "pin": "white",
-         "text": "group 0, distance 74.5\ncentre \t[ -798.43  -592.54 13432.02]\nprojected \t[ -786.6  -521.  13414.8]",
-         "x": -786.6,
-         "y": -521.0,
-         "z": 13414.8
+         "text": "group 0, distance 76.6\ncentre \t[ -798.43  -592.54 13432.02]\nprojected \t[ -784.1  -520.4 13410.8]",
+         "x": -784.1,
+         "y": -520.4,
+         "z": 13410.8
       },
       {
          "pin": "white",
-         "text": "group 0, distance 230.4\ncentre \t[ -677.09  -321.44 13349.38]\nprojected \t[ -740.1  -521.5 13444.5]",
-         "x": -740.1,
-         "y": -521.5,
-         "z": 13444.5
+         "text": "group 0, distance 227.5\ncentre \t[ -677.09  -321.44 13349.38]\nprojected \t[ -737.5  -520.9 13440.6]",
+         "x": -737.5,
+         "y": -520.9,
+         "z": 13440.6
       },
       {
          "pin": "white",
-         "text": "group 0, distance 82.2\ncentre \t[-1017.35  -562.68 13185.34]\nprojected \t[-1054.2  -518.1 13243.8]",
-         "x": -1054.2,
-         "y": -518.1,
-         "z": 13243.8
+         "text": "group 0, distance 78.8\ncentre \t[-1017.35  -562.68 13185.34]\nprojected \t[-1051.7  -517.5 13240. ]",
+         "x": -1051.7,
+         "y": -517.5,
+         "z": 13240.0
       },
       {
          "pin": "white",
-         "text": "group 0, distance 189.9\ncentre \t[-1048.81  -371.4  13389.3 ]\nprojected \t[ -985.5  -518.9 13287.7]",
-         "x": -985.5,
-         "y": -518.9,
-         "z": 13287.7
+         "text": "group 0, distance 192.4\ncentre \t[-1048.81  -371.4  13389.3 ]\nprojected \t[ -983.1  -518.2 13283.8]",
+         "x": -983.1,
+         "y": -518.2,
+         "z": 13283.8
       },
       {
          "pin": "white",
-         "text": "group 1, distance 3.5\ncentre \t[ 920.36 -145.42 -110.25]\nprojected \t[ 919.9 -148.6 -111.5]",
-         "x": 919.9,
-         "y": -148.6,
-         "z": -111.5
+         "text": "group 1, distance 3.8\ncentre \t[ 920.36 -145.42 -110.25]\nprojected \t[ 920.5 -144.2 -113.8]",
+         "x": 920.5,
+         "y": -144.2,
+         "z": -113.8
       },
       {
          "pin": "white",
-         "text": "group 1, distance 2980.4\ncentre \t[8653.54 -151.87 2684.02]\nprojected \t[ 8522.1 -1122.6  -130.8]",
-         "x": 8522.1,
-         "y": -1122.6,
-         "z": -130.8
+         "text": "group 1, distance 2899.8\ncentre \t[8653.54 -151.87 2684.02]\nprojected \t[ 8554.8 -1110.    -51.2]",
+         "x": 8554.8,
+         "y": -1110.0,
+         "z": -51.2
       },
       {
          "pin": "white",
-         "text": "group 1, distance 4059.0\ncentre \t[14585.61  -240.14  3564.8 ]\nprojected \t[14367.2 -1871.4  -145.6]",
-         "x": 14367.2,
-         "y": -1871.4,
-         "z": -145.6
+         "text": "group 1, distance 3918.5\ncentre \t[14585.61  -240.14  3564.8 ]\nprojected \t[ 1.44111e+04 -1.85080e+03 -3.10000e+00]",
+         "x": 14411.1,
+         "y": -1850.8,
+         "z": -3.1
       }
    ]
 }
