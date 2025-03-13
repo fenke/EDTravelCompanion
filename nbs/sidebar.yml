@@ -14,3 +14,17 @@ website:
       - section: linalg
         contents:
           - linalg\10_linalg_fitsvd.ipynb
+          - section: iframe_figures
+            contents:
+              - linalg\iframe_figures\figure_15.html
+              - linalg\iframe_figures\figure_21.html
+              - linalg\iframe_figures\figure_24.html
+              - linalg\iframe_figures\figure_27.html
+              - linalg\iframe_figures\figure_33.html
+              - linalg\iframe_figures\figure_39.html
+              - linalg\iframe_figures\figure_47.html
+              - linalg\iframe_figures\figure_53.html
+              - linalg\iframe_figures\figure_59.html
+              - linalg\iframe_figures\figure_65.html
+              - linalg\iframe_figures\figure_66.html
+              - linalg\iframe_figures\figure_9.html

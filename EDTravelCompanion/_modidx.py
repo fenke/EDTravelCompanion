@@ -6,4 +6,5 @@ d = { 'settings': { 'branch': 'main',
                 'git_url': 'https://github.com/fenke/EDTravelCompanion',
                 'lib_path': 'EDTravelCompanion'},
   'syms': { 'EDTravelCompanion.core': {'EDTravelCompanion.core.foo': ('core.html#foo', 'EDTravelCompanion/core.py')},
-            'EDTravelCompanion.fitsvd': {'EDTravelCompanion.fitsvd.foo': ('linalg/linalg_fitsvd.html#foo', 'EDTravelCompanion/fitsvd.py')}}}
+            'EDTravelCompanion.linalg.fitsvd': { 'EDTravelCompanion.linalg.fitsvd.fitline': ( 'linalg/linalg_fitsvd.html#fitline',
+                                                                                              'EDTravelCompanion/linalg/fitsvd.py')}}}

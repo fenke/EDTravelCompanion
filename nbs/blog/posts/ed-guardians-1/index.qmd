@@ -40,20 +40,22 @@ from scipy.interpolate import interp1d, LinearNDInterpolator
 from IPython.display import display
 from IPython.display import Markdown
 
+from EDTravelCompanion.linalg.fitsvd import fitline
+
 ```
 
 ```{python}
 
-NT_Line = namedtuple('line_nd',['direction', 'support'])
+NT_Line = namedtuple('line_nd',['support', 'direction'])
 
-def project_point_on_line(point, direction, support, rounding=1):
+def project_point_on_line(point, support, direction, rounding=1):
 
     """Projects a point on a line"""
 
     dp = np.dot(np.asarray(point)-np.asarray(support), np.asarray(direction) )
     return np.round(dp*np.asarray(direction) + np.asarray(support), rounding)
 
-def distance_point_to_line(point, direction, support):
+def distance_point_to_line(point, support, direction):
 
     """Calculate distance between point and a line"""
 
@@ -70,25 +72,15 @@ def line_from_points(points):
         from: https://ltetrel.github.io/data-science/2018/06/08/line_svd.html
 
         returns named tuple with properties support and direction."""
-    # https://ltetrel.github.io/data-science/2018/06/08/line_svd.html
 
-    # Calculate the mean of the points, i.e. the 'center' of the cloud
-    support = points.mean(axis=0)
-
-    # Do an SVD on the mean-centered data.
-    uu, dd, vv = np.linalg.svd(points - support)
-
-    return NT_Line(
-        direction = vv[0],
-        support = support,
-    )
+    return NT_Line(*fitline(points))
 
 
 ```
 
 
 ```{python}	
-raw_base_url = "https://raw.githubusercontent.com/fenke/terzijde/main/posts/ed-guardians-1/"
+raw_base_url = "https://raw.githubusercontent.com/fenke/EDTravelCompanion/main/nbs/blog/posts/ed-guardians-1/"
 ed_astro_galmap_url="https://edastro.com/galmap/"
 
 def create_astro_galmap_url(markers, **kwargs):
@@ -106,7 +98,7 @@ def create_astro_galmap_url(markers, **kwargs):
     return source 
 
 def embed_astro(markers, **kwargs):
-    return f''' <iframe width=100% height=640 src="{create_astro_galmap_url(markers, **kwargs)}"></iframe> '''
+    return f''' <iframe width=100% height=800 src="{create_astro_galmap_url(markers, **kwargs)}"></iframe> '''
 
 ```
 
@@ -362,30 +354,233 @@ The groups are found by applying DBSCAN to the centres of the clusters. [edastro
 
 :::
 
+### Fitting the lines pt.I - clusters
 
-### The lines
+We first use the `{python} str(len(np.unique(group_clusters.labels_)))` cluster groups we found and for each group fit a lines through their centers.
 
-We now group the system coordinates to the cluster groups we found and calculate the lines we saw for each group
+```{python}	
+
+guardian_clusters = {l:cluster_centers[np.equal(group_clusters.labels_,l)] for l in np.unique(group_clusters.labels_)}
+guardian_cluster_lines = {
+    int(l):line_from_points(cluster_centers[np.equal(group_clusters.labels_,l)])
+    for l in np.unique(group_clusters.labels_)
+}
+
+guardian_cluster_distances = {
+    int(l):np.round(distance_point_to_line(guardian_clusters[l], *guardian_cluster_lines[l]),2)
+    for l in np.unique(group_clusters.labels_)
+}
+
+```
+
+
+```{python}	
+
+for group in guardian_cluster_distances:
+
+    print(f"\nGroup {group} Mean distance {np.mean(guardian_cluster_distances[group])} ")
+    i = 0
+    glmask = np.ones(len(guardian_cluster_distances[group]), dtype=bool)
+
+    glp = np.percentile(guardian_cluster_distances[group][glmask], 80)
+    glmask = np.less(guardian_cluster_distances[group], glp)
+    print(glp, glmask)
+
+    guardian_cluster_lines[group] = line_from_points(guardian_clusters[group][glmask])
+    guardian_cluster_distances[group] = np.round(distance_point_to_line(guardian_clusters[group], *guardian_cluster_lines[group]),2)
+    print(f"\nGroup {group} Mean distance {np.mean(guardian_cluster_distances[group][glmask])} ")
+
+
+```
+
+
+```{python}
+guardian_projected_clusters_json_pins_1 = "guardian-projected-clusters-1.json"
+with open(guardian_projected_clusters_json_pins_1, 'wt') as of:
+        json.dump(dict(markers=[
+        dict(
+            pin='white',
+            text=f"group {l}, distance {round(distance_point_to_line(cc, *guardian_cluster_lines[l]),1)}\ncentre \t{cc}\nprojected \t{project_point_on_line(cc, *guardian_cluster_lines[l])}",
+            **{c:v for c,v in zip(['x','y','z'], list(project_point_on_line(cc, *guardian_cluster_lines[l])))}
+        )
+        for l in np.unique(group_clusters.labels_) 
+        for cc in guardian_clusters[l]
+        if not l < 0
+    ]),of,indent=3)
+```
+
+
+::: {#fig-astro-projected_clusters-1}
+
+```{python}
+fig_url = create_astro_galmap_url(
+    markers = [guardian_projected_clusters_json_pins_1, guardian_clusters_json_pins],
+    layer = 'heatmap')
+
+Markdown(f"""
+{embed_astro( [guardian_projected_clusters_json_pins_1, guardian_clusters_json_pins], layer='heatmap')}
+
+
+"""
+)
+
+```
+
+The clusters and their  projection on the calculated lines. [edastro link](`{python} fig_url`). 
+
+:::
+
+### Fitting the lines pt.II - systems
+
+We now group the system coordinates to the `{python} str(len(np.unique(group_clusters.labels_)))` cluster groups we found and for each group fit a lines through the _systems_ like we saw in @fig-astro-guardian-sites.
 
 ```{python}	
 guardian_systems_grouping = group_clusters.labels_[coord_clusters.labels_]
+
+guardian_groups = {l:soi_coordinates[np.equal(guardian_systems_grouping,l)] for l in np.unique(guardian_systems_grouping)}
+```
+
+
+```{python}	
 
 glines = {
     int(l):line_from_points(soi_coordinates[np.equal(guardian_systems_grouping,l)])
     for l in np.unique(group_clusters.labels_)
 }
+
 gsystem_lines = {
     int(l):line_from_points(soi_coordinates[np.equal(guardian_systems_grouping,l)])._asdict()
     for l in np.unique(group_clusters.labels_)
 }
 
-guardian_projected_clusters_json_pins = "guardian-projected-clusters.json"
-with open(guardian_projected_clusters_json_pins, 'wt') as of:
+```
+
+
+Calculating the distance of systems to each line we find for mean and variance of these distances
+
+
+```{python}	
+guardian_groups_distances = {
+    int(l):np.round(distance_point_to_line(guardian_groups[l], *glines[l]),2)
+    for l in np.unique(group_clusters.labels_)
+}
+
+guardian_groups_distances_mean = {
+    int(l):np.round(np.mean(guardian_groups_distances[l]),2)
+    for l in np.unique(group_clusters.labels_)
+}
+
+guardian_groups_distances_std = {
+    int(l):np.round(np.std(guardian_groups_distances[l]),2)
+    for l in np.unique(group_clusters.labels_)
+}
+
+guardian_groups_distances_max = {
+    int(l):np.round(np.amax(guardian_groups_distances[l]),2)
+    for l in np.unique(group_clusters.labels_)
+}
+
+```
+
+
+
+
+```{python}
+pd.DataFrame(
+    dict(
+        group=np.unique(group_clusters.labels_),
+        mean=guardian_groups_distances_mean.values(),
+        std = guardian_groups_distances_std.values(),
+        max = guardian_groups_distances_max.values(),
+        count=[len(guardian_groups[l]) for l in np.unique(group_clusters.labels_)] 
+    ),
+).set_index('group')
+```
+
+
+We find some systems quite far from 'their' line, so we'll filter at the 90th percentile of the distances, then recalculate lines with those systems only and repeat a few iterations
+
+
+```{python}	
+
+for group in guardian_groups_distances:
+    print(f"\nGroup {group} Mean distance {guardian_groups_distances_mean[group]} Std {guardian_groups_distances_std[group]} Max {guardian_groups_distances_max[group]}")
+    i = 0
+    glmask = np.ones(len(guardian_groups_distances[group]), dtype=bool)
+    while i < 9:
+        glp = np.percentile(guardian_groups_distances[group][glmask], 90)
+        glmask = np.less(guardian_groups_distances[group], glp)
+
+        glines[group] = line_from_points(guardian_groups[group][glmask])
+        guardian_groups_distances[group] = np.round(distance_point_to_line(guardian_groups[group], *glines[group]),2)
+
+        guardian_groups_distances_mean[group] = np.round(np.mean(guardian_groups_distances[group][glmask]),2)
+        guardian_groups_distances_std[group] = np.round(np.std(guardian_groups_distances[group][glmask]),2)
+        guardian_groups_distances_max[group] = np.round(np.amax(guardian_groups_distances[group][glmask]),2)
+
+        system_count = len(guardian_groups[group][glmask])
+        print(f"Group {group}, {system_count} systems, Mean distance {guardian_groups_distances_mean[group]} Std {guardian_groups_distances_std[group]} Max {guardian_groups_distances_max[group]}")
+        i += 1
+
+        if system_count / len(guardian_groups[group]) < 0.67:
+            break
+```
+
+
+
+```{python}
+pd.DataFrame(
+    dict(
+        group=np.unique(group_clusters.labels_),
+        mean=guardian_groups_distances_mean.values(),
+        std = guardian_groups_distances_std.values(),
+        max = guardian_groups_distances_max.values()
+    ),
+).set_index('group')
+```
+
+
+
+```{python}
+guardian_lines_json_pins = "guardian-lines.json"
+with open(guardian_lines_json_pins, 'wt') as of:
         json.dump(dict(markers=[
         dict(
             pin='white',
-            text=f"cluster {cc}, distance {round(distance_point_to_line(cc, **gsystem_lines[l]),1)}\ncentre \t{cc}\nprojected \t{project_point_on_line(cc, **gsystem_lines[l])}",
-            **{c:round(v,1) for c,v in zip(['x','y','z'], list(project_point_on_line(cc, **gsystem_lines[l])))}
+            text=f"group {l}",
+            **{c:v for c,v in zip(['x','y','z'], list(glines[l].support + 2000*s*glines[l].direction))}
+        )
+        for l in np.unique(group_clusters.labels_) 
+        for s in range(-5,6)
+        if not l < 0
+    ]),of,indent=3)
+```
+
+
+```{python}	
+
+```
+
+
+```{python}	
+pd.DataFrame(
+    dict(
+        cluster=[cc for cc in np.unique(coord_clusters.labels_) if cc >=0],
+        group=group_clusters.labels_,
+        distance=np.round(distance_point_to_line(cluster_centers, *glines[group]),2),
+    
+)).set_index(['group','cluster'])
+```
+
+
+```{python}
+guardian_projected_clusters_json_pins_2 = "guardian-projected-clusters-2.json"
+with open(guardian_projected_clusters_json_pins_2, 'wt') as of:
+        json.dump(dict(markers=[
+        dict(
+            pin='white',
+            text=f"group {l}, distance {round(distance_point_to_line(cc, *glines[l]),1)}\ncentre \t{cc}\nprojected \t{project_point_on_line(cc, *glines[l])}",
+            **{c:v for c,v in zip(['x','y','z'], list(project_point_on_line(cc, *glines[l])))}
         )
         for l in np.unique(group_clusters.labels_) 
         for cc in cluster_centers[np.equal(group_clusters.labels_,l)]
@@ -398,11 +593,11 @@ with open(guardian_projected_clusters_json_pins, 'wt') as of:
 
 ```{python}
 fig_url = create_astro_galmap_url(
-    markers = [guardian_projected_clusters_json_pins, guardian_clusters_json_pins],
+    markers = [guardian_projected_clusters_json_pins_2, guardian_clusters_json_pins],
     layer = 'heatmap')
 
 Markdown(f"""
-{embed_astro( [guardian_projected_clusters_json_pins, guardian_clusters_json_pins], layer='heatmap')}
+{embed_astro( [guardian_projected_clusters_json_pins_2, guardian_clusters_json_pins], layer='heatmap')}
 
 
 """
