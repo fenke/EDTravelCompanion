@@ -41,6 +41,7 @@ from IPython.display import display
 from IPython.display import Markdown
 
 from EDTravelCompanion.linalg.fitsvd import fitline
+from EDTravelCompanion.md.edastro import create_galaxymap_url, embed_galaxymap
 
 ```
 
@@ -78,29 +79,6 @@ def line_from_points(points):
 
 ```
 
-
-```{python}	
-raw_base_url = "https://raw.githubusercontent.com/fenke/EDTravelCompanion/main/nbs/blog/posts/ed-guardians-1/"
-ed_astro_galmap_url="https://edastro.com/galmap/"
-
-def create_astro_galmap_url(markers, **kwargs):
-
-    if kwargs:
-        ed_astro_galmap_custom_url = f"{ed_astro_galmap_url}?{'&'.join([f'{k}={v}' for k,v in kwargs.items()])}&custom="
-    else:
-        ed_astro_galmap_custom_url = f"{ed_astro_galmap_url}?custom="
-
-    if isinstance(markers, list):
-        source = f"{ed_astro_galmap_custom_url}{';'.join([raw_base_url + str(s) for s in markers])}"
-    else:
-        source = f"{ed_astro_galmap_custom_url}{raw_base_url + str(markers)}"
-
-    return source 
-
-def embed_astro(markers, **kwargs):
-    return f''' <iframe width=100% height=800 src="{create_astro_galmap_url(markers, **kwargs)}"></iframe> '''
-
-```
 
 
 ## Introduction
@@ -242,7 +220,7 @@ with open(guardian_outliers_json_pins, 'wt') as of:
 
 Markdown(f"""
 
-{embed_astro(guardian_outliers_json_pins)}
+{embed_galaxymap(guardian_outliers_json_pins)}
 
 
 """
@@ -277,7 +255,7 @@ with open(guardian_clusters_json_pins, 'wt') as of:
 #| caption: Clusters of Guardian sites
 Markdown(f"""
 
-{embed_astro(guardian_clusters_json_pins, layer='heatmap')}
+{embed_galaxymap(guardian_clusters_json_pins, layer='heatmap')}
 
 
 """
@@ -337,12 +315,12 @@ with open(guardian_two_goups_json_pins, 'wt') as of:
 ::: {#fig-astro-two-groups}
 
 ```{python}
-fig_url = create_astro_galmap_url(
+fig_url = create_galaxymap_url(
     markers = guardian_two_goups_json_pins,
     layer = 'heatmap')
 
 Markdown(f"""
-{embed_astro(guardian_two_goups_json_pins, layer='heatmap')}
+{embed_galaxymap(guardian_two_goups_json_pins, layer='heatmap')}
 
 
 """
@@ -413,12 +391,12 @@ with open(guardian_projected_clusters_json_pins_1, 'wt') as of:
 ::: {#fig-astro-projected_clusters-1}
 
 ```{python}
-fig_url = create_astro_galmap_url(
+fig_url = create_galaxymap_url(
     markers = [guardian_projected_clusters_json_pins_1, guardian_clusters_json_pins],
     layer = 'heatmap')
 
 Markdown(f"""
-{embed_astro( [guardian_projected_clusters_json_pins_1, guardian_clusters_json_pins], layer='heatmap')}
+{embed_galaxymap( [guardian_projected_clusters_json_pins_1, guardian_clusters_json_pins], layer='heatmap')}
 
 
 """
@@ -592,12 +570,12 @@ with open(guardian_projected_clusters_json_pins_2, 'wt') as of:
 ::: {#fig-astro-projected_clusters}
 
 ```{python}
-fig_url = create_astro_galmap_url(
+fig_url = create_galaxymap_url(
     markers = [guardian_projected_clusters_json_pins_2, guardian_clusters_json_pins],
     layer = 'heatmap')
 
 Markdown(f"""
-{embed_astro( [guardian_projected_clusters_json_pins_2, guardian_clusters_json_pins], layer='heatmap')}
+{embed_galaxymap( [guardian_projected_clusters_json_pins_2, guardian_clusters_json_pins], layer='heatmap')}
 
 
 """

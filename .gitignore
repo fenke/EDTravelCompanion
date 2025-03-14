@@ -158,3 +158,4 @@ checklink/cookies.txt
 site_libs/
 index.quarto_ipynb
 iframe_figures/
+nbs/eddb/NavRoute.json
