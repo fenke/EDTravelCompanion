@@ -156,3 +156,5 @@ checklink/cookies.txt
 *.typ
 
 site_libs/
+index.quarto_ipynb
+iframe_figures/
