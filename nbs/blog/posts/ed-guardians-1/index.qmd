@@ -40,8 +40,8 @@ from scipy.interpolate import interp1d, LinearNDInterpolator
 from IPython.display import display
 from IPython.display import Markdown
 
-from EDTravelCompanion.linalg.fitsvd import fitline
-from EDTravelCompanion.md.edastro import create_galaxymap_url, embed_galaxymap
+from edcompanion.linalg.fitsvd import fitline
+from edcompanion.md.edastro import create_galaxymap_url, embed_galaxymap
 
 ```
 

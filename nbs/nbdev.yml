@@ -2,7 +2,7 @@ project:
   output-dir: _docs
 
 website:
-  title: "EDTravelCompanion"
+  title: "EDCompanion"
   site-url: "https://fenke.github.io/EDTravelCompanion"
   description: "Faithful companion while out in the black. o7"
   repo-branch: main

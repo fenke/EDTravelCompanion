@@ -13,6 +13,9 @@ started.
 
 ### Install EDTravelCompanion in Development mode
 
+Note that the project is *EDTravelCompanion* while the library is
+*edcompanion*
+
 ``` sh
 # make sure EDTravelCompanion package is installed in development mode
 $ pip install -e .
@@ -35,16 +38,10 @@ Install latest from the GitHub
 $ pip install git+https://github.com/fenke/EDTravelCompanion.git
 ```
 
-or from [conda](https://anaconda.org/fenke/EDTravelCompanion)
-
-``` sh
-$ conda install -c fenke EDTravelCompanion
-```
-
 or from [pypi](https://pypi.org/project/EDTravelCompanion/)
 
 ``` sh
-$ pip install EDTravelCompanion
+$ pip install edcompanion
 ```
 
 ### Documentation
