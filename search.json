@@ -1,0 +1,143 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "EDTravelCompanion",
+    "section": "",
+    "text": "This file will become your README and also the index of your documentation.",
+    "crumbs": [
+      "Blog",
+      "EDTravelCompanion"
+    ]
+  },
+  {
+    "objectID": "index.html#developer-guide",
+    "href": "index.html#developer-guide",
+    "title": "EDTravelCompanion",
+    "section": "Developer Guide",
+    "text": "Developer Guide\nIf you are new to using nbdev here are some useful pointers to get you started.\n\nInstall EDTravelCompanion in Development mode\nNote that the project is EDTravelCompanion while the library is edcompanion\n# make sure EDTravelCompanion package is installed in development mode\n$ pip install -e .\n\n# make changes under nbs/ directory\n# ...\n\n# compile to have changes apply to EDTravelCompanion\n$ nbdev_prepare",
+    "crumbs": [
+      "Blog",
+      "EDTravelCompanion"
+    ]
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "EDTravelCompanion",
+    "section": "Usage",
+    "text": "Usage\n\nInstallation\nInstall latest from the GitHub repository:\n$ pip install git+https://github.com/fenke/EDTravelCompanion.git\nor from pypi\n$ pip install edcompanion\n\n\nDocumentation\nDocumentation can be found hosted on this GitHub repository’s pages. Additionally you can find package manager specific guidelines on conda and pypi respectively.",
+    "crumbs": [
+      "Blog",
+      "EDTravelCompanion"
+    ]
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "EDTravelCompanion",
+    "section": "How to use",
+    "text": "How to use\nFill me in please! Don’t forget code examples:\n\n1+1\n\n2",
+    "crumbs": [
+      "Blog",
+      "EDTravelCompanion"
+    ]
+  },
+  {
+    "objectID": "blog/posts/ed-guardians-1/index.html",
+    "href": "blog/posts/ed-guardians-1/index.html",
+    "title": "Elite Dangerous: Guardians I",
+    "section": "",
+    "text": "The Guardians, a lost, enigmatic civilization that left us beacons and ruins, millions of years old, yet all still functional. They were technologically advanced and colonized part of the Orion arm long before humans learned to travel between stars, long before we even existed.\nNot one decade after their initial discovery a remarkable 300 systems have been discovered with remains of this mysterious civilization.\nMore information and research on the Guardians you can find with Canonn Research / The Guardians.\n\n\nThe Interactive Galactic Map with EDAstro can display markersfor known systems with guardian sites, the result can be seen in Figure 1.\n\n\n\n\n\n\nFigure 1: Galactic Map with Guardian sites\n\n\n\nLooking at this map we immediately recognize these markers appear to lie on two lines that intersect somewhere at the border between the Formidine Rift and the Errant Marches.",
+    "crumbs": [
+      "Blog",
+      "blog",
+      "posts",
+      "ed-guardians-1"
+    ]
+  },
+  {
+    "objectID": "blog/posts/ed-guardians-1/index.html#introduction",
+    "href": "blog/posts/ed-guardians-1/index.html#introduction",
+    "title": "Elite Dangerous: Guardians I",
+    "section": "",
+    "text": "The Guardians, a lost, enigmatic civilization that left us beacons and ruins, millions of years old, yet all still functional. They were technologically advanced and colonized part of the Orion arm long before humans learned to travel between stars, long before we even existed.\nNot one decade after their initial discovery a remarkable 300 systems have been discovered with remains of this mysterious civilization.\nMore information and research on the Guardians you can find with Canonn Research / The Guardians.\n\n\nThe Interactive Galactic Map with EDAstro can display markersfor known systems with guardian sites, the result can be seen in Figure 1.\n\n\n\n\n\n\nFigure 1: Galactic Map with Guardian sites\n\n\n\nLooking at this map we immediately recognize these markers appear to lie on two lines that intersect somewhere at the border between the Formidine Rift and the Errant Marches.",
+    "crumbs": [
+      "Blog",
+      "blog",
+      "posts",
+      "ed-guardians-1"
+    ]
+  },
+  {
+    "objectID": "blog/posts/ed-guardians-1/index.html#first-analysis",
+    "href": "blog/posts/ed-guardians-1/index.html#first-analysis",
+    "title": "Elite Dangerous: Guardians I",
+    "section": "First analysis",
+    "text": "First analysis\nCanonn Research maintains data on discoveries related to the Guardians. We use the coordinate data Canonn Research and collect them into a minimal dataframe for further use.\nThere are 3 sheets we are using, Guardian Ruins, Guardian Structures and Guardian Beacons. These sheets were downloaded from the Canonn Research website as csv files on 2025-03-15.\nThey hold information on a total of 755 records for sites in 349 systems.\n\nClusters and outliers\nOn the Galactic Map with Guardian Sites (Figure 1) we recognize sites are clustered - mostly along travel routes - and if we cluster using DBSCAN1 we can identify both the groups of sites and outliers.\n1 Density-based spatial clustering; given a set of points in some space, it groups together points that are closely packed (points with many nearby neighbors), and marks as outliers points that lie alone in low-density regions (those whose nearest neighbors are too far away)\ndbscan_parameters = dict(\n    eps=200,        # maximum distance between neighbours\n    min_samples=3   # minimum size of a cluster\n)\n\nWith these parameters we identify 12 clusters and 2 outliers\n\nOutliers\n\n\n\n\n\n\n\n\n\nx\ny\nz\n\n\nSystem Name\n\n\n\n\n\n\n\nTRAPEZIUM SECTOR YU-X C1-2\n573.6\n-339.5\n-1167.7\n\n\nWREGOE BU-Y B2-0\n1077.4\n400.6\n-993.4\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nClusters\nThe centers of the 12 clusters can be seen in the interactive map below, with the number of sites in each cluster.\n\n\n\n\n\nThe centre of each cluster is found by taking the mean of the coordinates of the sites of each cluster.\nWe now apply DBSCAN to the centre of each cluster to identify the groups we are looking for with the following parameters:\n\ndbscan_parameters = dict(\n    eps=10000,        # maximum distance between neighbouring centres\n    min_samples=3     # minimum number of centres\n)\n\nWe easily distinguish the 2 groups.\n\n\n\n\n\n\n\n\n\n\nFigure 2: The groups are found by applying DBSCAN to the centres of the clusters. edastro link.\n\n\n\n\n\n\nFitting the lines pt.I - clusters\nWe first use the 2 cluster groups we found and for each group fit a lines through their centers.\n\n\n\nGroup 0 Mean distance 834.1787499999999 \n1428.4320000000002 [ True  True False False  True  True  True  True]\n\nGroup 0 Mean distance 128.525 \n\nGroup 1 Mean distance 304.89000000000004 \n380.362 [ True False  True]\n\nGroup 1 Mean distance 0.0 \n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3: The clusters and their projection on the calculated lines. edastro link.\n\n\n\n\n\nFitting the lines pt.II - systems\nWe now group the system coordinates to the 2 cluster groups we found and for each group fit a lines through the systems like we saw in Figure 1.\nCalculating the distance of systems to each line we find for mean and variance of these distances\n\n\n\n\n\n\n\n\n\nmean\nstd\nmax\ncount\n\n\ngroup\n\n\n\n\n\n\n\n\n0\n1341.76\n2010.37\n11182.57\n60\n\n\n1\n125.45\n105.07\n584.19\n289\n\n\n\n\n\n\n\nWe find some systems quite far from ‘their’ line, so we’ll filter at the 90th percentile of the distances, then recalculate lines with those systems only and repeat a few iterations\n\n\n\nGroup 0 Mean distance 1341.76 Std 2010.37 Max 11182.57\nGroup 0, 54 systems, Mean distance 777.31 Std 783.04 Max 2231.58\nGroup 0, 52 systems, Mean distance 645.07 Std 539.31 Max 2431.41\nGroup 0, 46 systems, Mean distance 278.8 Std 347.94 Max 2530.76\nGroup 0, 41 systems, Mean distance 151.89 Std 70.57 Max 273.75\nGroup 0, 36 systems, Mean distance 134.44 Std 63.28 Max 258.99\n\nGroup 1 Mean distance 125.45 Std 105.07 Max 584.19\nGroup 1, 260 systems, Mean distance 94.63 Std 52.28 Max 224.8\nGroup 1, 241 systems, Mean distance 82.93 Std 43.1 Max 180.63\nGroup 1, 216 systems, Mean distance 73.69 Std 36.03 Max 148.64\nGroup 1, 194 systems, Mean distance 66.11 Std 29.93 Max 133.23\nGroup 1, 174 systems, Mean distance 59.69 Std 25.09 Max 109.21\n\n\n\n\n\n\n\n\n\n\n\nmean\nstd\nmax\n\n\ngroup\n\n\n\n\n\n\n\n0\n134.44\n63.28\n258.99\n\n\n1\n59.69\n25.09\n109.21\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndistance\n\n\ngroup\ncluster\n\n\n\n\n\n1\n0\n7.91\n\n\n0\n1\n11943.97\n\n\n1\n2\n697.55\n\n\n0\n3\n10431.34\n\n\n4\n19000.14\n\n\n5\n11952.12\n\n\n1\n6\n5.80\n\n\n0\n7\n13537.33\n\n\n8\n13420.09\n\n\n9\n13355.23\n\n\n10\n13555.94\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 4: The clusters and their projection on the calculated lines. edastro link.\n\n\n\n\n\nReferences",
+    "crumbs": [
+      "Blog",
+      "blog",
+      "posts",
+      "ed-guardians-1"
+    ]
+  },
+  {
+    "objectID": "eddb/navroute.html",
+    "href": "eddb/navroute.html",
+    "title": "Elite Dangerous - Navigation",
+    "section": "",
+    "text": "Navigation route\nIterate through the route items in the Elite Dangerous navigation route file\n\nsource\n\n\nnavigationroute\n\n navigationroute (journalingpath:str=None)\n\n*Iter over Navigation Route files\nArgs: journalingpath (str): Path to directory with Elite Dangerous logfiles*\n\njournaling_path = os.getcwd()\nprint(\"The journaling path is %s\" % journaling_path)\n\nThe journaling path is c:\\Users\\fenke\\repos\\EDTravelCompanion\\nbs\\eddb\n\n\n\ntest_data = { \"timestamp\":\"2024-10-15T19:11:31Z\", \"event\":\"NavRouteClear\", \"Route\":[ \n    { \"StarSystem\":\"Nyeajeou RO-N c21-2\", \"SystemAddress\":618038401210, \"StarClass\":\"K\", \"RemainingJumpsInRoute\":11 },\n    { \"StarSystem\":\"Nyeajeou SE-M c22-5\", \"SystemAddress\":1442739296450, \"StarClass\":\"K\", \"RemainingJumpsInRoute\":10 },\n    { \"StarSystem\":\"Nyeajeou UP-K c23-2\", \"SystemAddress\":618105608394, \"StarClass\":\"K\", \"RemainingJumpsInRoute\":9 }\n ] }\n\nnavfile = os.path.join(journaling_path, \"NavRoute.json\")\nprint(\"Writing Navigation Route to %s\" % navfile)\nwith open(navfile, \"wt\") as jsonfile:\n    json.dump(test_data, jsonfile, indent=2)\n\nWriting Navigation Route to c:\\Users\\fenke\\repos\\EDTravelCompanion\\nbs\\eddb\\NavRoute.json\n\n\n\nprint(\"Reading Navigation Route from %s\\n\" % os.path.join(journaling_path, \"NavRoute.json\"))\n\nfor read_item, test_item in zip(navigationroute(journaling_path), test_data.get('Route'), strict=True):\n    print(read_item)\n    assert str(read_item) == str(test_item), \"Items do not match %s != %s\" % (str(read_item), str(test_item))\n\nReading Navigation Route from c:\\Users\\fenke\\repos\\EDTravelCompanion\\nbs\\eddb\\NavRoute.json\n\n{'StarSystem': 'Nyeajeou RO-N c21-2', 'SystemAddress': 618038401210, 'StarClass': 'K', 'RemainingJumpsInRoute': 11}\n{'StarSystem': 'Nyeajeou SE-M c22-5', 'SystemAddress': 1442739296450, 'StarClass': 'K', 'RemainingJumpsInRoute': 10}\n{'StarSystem': 'Nyeajeou UP-K c23-2', 'SystemAddress': 618105608394, 'StarClass': 'K', 'RemainingJumpsInRoute': 9}",
+    "crumbs": [
+      "Blog",
+      "eddb",
+      "Elite Dangerous - Navigation"
+    ]
+  },
+  {
+    "objectID": "core.html",
+    "href": "core.html",
+    "title": "core",
+    "section": "",
+    "text": "source\n\ninit_config\n\n init_config (config_file='/home/runner/work/EDTravelCompanion/EDTravelCom\n              panion/edcompanion.ini')\n\n\nconf = init_config()\n\n\nconf[\"DBCONFIG\"] = {\n\"db-url\": \"mydb.com/connection-string\",\n\"port\": \"3306\",\n\"ipaddr\": \"100.10.10.1\"\n}",
+    "crumbs": [
+      "Blog",
+      "core"
+    ]
+  },
+  {
+    "objectID": "md/edastro.html",
+    "href": "md/edastro.html",
+    "title": "Markdown support for Quarto",
+    "section": "",
+    "text": "source\n\ncreate_galaxymap_url\n\n create_galaxymap_url (markers, **kwargs)\n\n\nsource\n\n\nembed_galaxymap\n\n embed_galaxymap (markers, **kwargs)",
+    "crumbs": [
+      "Blog",
+      "md",
+      "Markdown support for Quarto"
+    ]
+  },
+  {
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Elite Dangerous Travel Companion",
+    "section": "",
+    "text": "Elite Dangerous: Guardians I\n\n\n\n\n\n\nelite-dangerous\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nFeb 1, 3310\n\n\nCMDR immerlicht\n\n\n\n\n\n\nNo matching items",
+    "crumbs": [
+      "Blog",
+      "blog"
+    ]
+  },
+  {
+    "objectID": "linalg/linalg_fitsvd.html",
+    "href": "linalg/linalg_fitsvd.html",
+    "title": "Linear Algebra - SVD Fit",
+    "section": "",
+    "text": "## imports\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport plotly.graph_objects as go\n\n\n# fixing numpy random state for reproducibility\nnp.random.seed(0)\n\n\n# input data\nn = 25\npoints = np.array( [5*np.arange(n),5+5*np.arange(n),5*np.ones(n)] ).T + 0.5-np.random.rand(n,3)\npoints\n\narray([[ -0.43239394,   5.2846018 ,   4.64166236],\n       [  4.69710663,  10.34085376,   4.89428804],\n       [ 10.38433813,  14.77211184,   4.86253772],\n       [ 14.68806144,  20.02061545,   4.58513691],\n       [ 20.45065105,  25.20711143,   4.7849474 ],\n       [ 25.08189079,  30.32704865,   5.39278925],\n       [ 29.68266089,  35.02685702,   4.61771633],\n       [ 34.76671087,  40.09027379,   5.12648899],\n       [ 39.98436165,  44.61094005,   4.76272142],\n       [ 45.49484704,  49.80584215,   4.58049259],\n       [ 49.78954424,  55.32299422,   5.01648187],\n       [ 55.35968398,  60.14100472,   4.56288296],\n       [ 59.57669469,  65.21716315,   5.16036896],\n       [ 64.89978713,  69.5368027 ,   5.35219867],\n       [ 70.24308336,  74.62644317,   5.00810777],\n       [ 74.60103891,  80.3144821 ,   4.96733141],\n       [ 80.17373037,  85.18345744,   5.05312304],\n       [ 85.06692255,  90.14265312,   4.58502923],\n       [ 89.76825581,  94.77245301,   5.21008655],\n       [ 94.92229058,  99.72082057,   4.70440963],\n       [100.15546954, 104.72912724,   4.7641061 ],\n       [105.35849351, 109.63405453,   5.05867853],\n       [110.01358955, 115.05163082,   4.932154  ],\n       [114.87883075, 120.00182043,   4.63321146],\n       [119.87226524, 125.09857205,   5.08330824]])\n\n\n\n# calculating the mean of the points\navg = np.mean(points, axis=0)\n\n# subtracting the mean from all points\nsubtracted = points - avg\n\n# performing SVD\n_, _, V = np.linalg.svd(subtracted)\n\n\n# find the direction vector (which is the right singular vector corresponding to the largest singular value)\ndirection = V[0, :]\n\n# A line is defined by the average and its direction\np0 = avg\nd = direction\nprint(d)\n\n[7.08153575e-01 7.06058100e-01 6.87968476e-04]\n\n\n\nd0 = np.array([0, 0, 1])\nangle = np.arccos(np.dot(d0,d)/(np.linalg.norm(d0) * np.linalg.norm(d)))\nprint(angle*180/np.pi)\n\n89.96058230676098\n\n\n\npa = p0 + (-100)*d\npb = p0 + 100*d\nprint(pa, pb)\n\n[-10.83624093  -5.60662059   4.82481353] [130.79447411 135.60499941   4.96240723]\n\n\n\n## plotly\ntrace1 = go.Scatter3d(\n    x=[pa[0],pb[0]],\n    y=[pa[1],pb[1]],\n    z=[pa[2],pb[2]],\n    mode='lines',\n    name='3D fitted line',\n    line=go.scatter3d.Line(color='rgb(255,0,0)', width=10),\n    hoverinfo='none')\n\nlabels = []\nfor i in range(n): labels += [str(i)]  \ntrace2 = go.Scatter3d(\n    x=points[:,0],\n    y=points[:,1],\n    z=points[:,2],\n    mode='markers',\n    name='Points',\n    marker=go.scatter3d.Marker(\n        symbol='cross',\n        opacity=1,\n        color='rgb(0,200,127)'),\n    text=labels,\n    hoverinfo='text')\n\nlayout = go.Layout(\n            title=\"3D line fitting\",\n            scene=go.layout.Scene(\n                    xaxis_title=\"x\",\n                    yaxis_title=\"y\",\n                    zaxis_title=\"z\",\n                    camera=dict(\n                           up=dict(x=0, y=0, z=1),\n                           center=dict(x=0, y=0, z=0),\n                           eye=dict(x=0, y=2.5, z=0))))     \n\n\nfig=go.Figure(data=[trace1, trace2], layout=layout)\nfig.show(renderer=\"iframe_connected\", config={'showLink': False})\n\n\n\n\n\nsource\n\nfitline\n\n fitline (points)",
+    "crumbs": [
+      "Blog",
+      "linalg",
+      "Linear Algebra - SVD Fit"
+    ]
+  }
+]
