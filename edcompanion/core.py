@@ -12,8 +12,17 @@ import os, logging, configparser
 syslog = logging.getLogger(f"root.{__name__}")
 
 
-# %% ../nbs/00_core.ipynb 5
-def init_config(config_file = os.path.join(os.getcwd(), 'edcompanion.ini')):
+# %% ../nbs/00_core.ipynb 6
+def get_config_path():
+    basepath =os.getenv('APPDATA', os.getenv('HOME', os.getenv('USERPROFILE', os.getcwd())))
+    config_path = os.path.join(basepath, '.edtravelcompanion')
+    os.makedirs(config_path, exist_ok=True)
+    return config_path
+
+
+
+# %% ../nbs/00_core.ipynb 10
+def init_config(config_file = os.path.join(get_config_path(), 'edcompanion.ini')):
 
     if not hasattr(init_config, 'configurations'):
         init_config.configurations = {}
