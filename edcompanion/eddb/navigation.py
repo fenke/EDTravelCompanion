@@ -14,7 +14,7 @@ from logging import getLogger
 syslog = getLogger(f"root.{__name__}")
 default_journaling_path = os.getcwd()
 
-# %% ../../nbs/eddb/81_navroute.ipynb 5
+# %% ../../nbs/eddb/81_navroute.ipynb 6
 def navigationroute(journalingpath:str=None):
     '''
         Iter over Navigation Route files
