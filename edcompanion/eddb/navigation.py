@@ -12,7 +12,7 @@ from logging import getLogger
 
 # %% ../../nbs/eddb/81_navroute.ipynb 4
 syslog = getLogger(f"root.{__name__}")
-default_journaling_path = os.path.join(os.getenv("userprofile"), "Saved Games", "Elite Dangerous")
+default_journaling_path = os.getcwd()
 
 # %% ../../nbs/eddb/81_navroute.ipynb 5
 def navigationroute(journalingpath:str=None):

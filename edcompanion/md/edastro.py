@@ -28,5 +28,5 @@ def create_galaxymap_url(markers, **kwargs):
 
 # %% ../../nbs/md/90_edastro.ipynb 5
 def embed_galaxymap(markers, **kwargs):
-    return f''' <iframe width=100% height=800 src="{create_galaxymap_url(markers, **kwargs)}"></iframe> '''
+    return f''' <iframe width=100% height=480 src="{create_galaxymap_url(markers, **kwargs)}"></iframe> '''
 
