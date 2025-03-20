@@ -11,6 +11,9 @@ website:
                 contents: []
                 href: blog\posts\ed-guardians-1\index.qmd
         href: blog\index.qmd
+      - section: eddb
+        contents:
+          - eddb\81_navroute.ipynb
       - section: linalg
         contents:
           - linalg\10_linalg_fitsvd.ipynb
@@ -21,6 +24,7 @@ website:
               - linalg\iframe_figures\figure_24.html
               - linalg\iframe_figures\figure_27.html
               - linalg\iframe_figures\figure_33.html
+              - linalg\iframe_figures\figure_35.html
               - linalg\iframe_figures\figure_39.html
               - linalg\iframe_figures\figure_47.html
               - linalg\iframe_figures\figure_53.html
@@ -28,3 +32,6 @@ website:
               - linalg\iframe_figures\figure_65.html
               - linalg\iframe_figures\figure_66.html
               - linalg\iframe_figures\figure_9.html
+      - section: md
+        contents:
+          - md\90_edastro.ipynb
