@@ -19,4 +19,10 @@ d = { 'settings': { 'branch': 'main',
             'edcompanion.md.edastro': { 'edcompanion.md.edastro.create_galaxymap_url': ( 'md/edastro.html#create_galaxymap_url',
                                                                                          'edcompanion/md/edastro.py'),
                                         'edcompanion.md.edastro.embed_galaxymap': ( 'md/edastro.html#embed_galaxymap',
-                                                                                    'edcompanion/md/edastro.py')}}}
+                                                                                    'edcompanion/md/edastro.py')},
+            'edcompanion.threadworkers': { 'edcompanion.threadworkers.create_get_task_item_fn': ( 'threadworkers.html#create_get_task_item_fn',
+                                                                                                  'edcompanion/threadworkers.py'),
+                                           'edcompanion.threadworkers.create_put_task_item_fn': ( 'threadworkers.html#create_put_task_item_fn',
+                                                                                                  'edcompanion/threadworkers.py'),
+                                           'edcompanion.threadworkers.workloop': ( 'threadworkers.html#workloop',
+                                                                                   'edcompanion/threadworkers.py')}}}

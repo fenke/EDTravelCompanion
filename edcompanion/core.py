@@ -26,8 +26,8 @@ def get_log_path():
 
 # %% ../nbs/00_core.ipynb 8
 def init_configuration(
-        config_file = os.path.join(get_config_path(), 'edcompanion.ini') # filename including path for the config file 
-):
+        configuration_file = os.path.join(get_config_path(), 'edcompanion.ini') # filename including path for the config file 
+    ):
     
     """
         Opens the specified configuration file (.ini) and 
@@ -37,57 +37,58 @@ def init_configuration(
     if not hasattr(init_configuration, 'configurations'):
         init_configuration.configurations = {}
 
+    config_file = os.path.abspath(configuration_file)
     if config_file in init_configuration.configurations:
-        return configuration
+        return init_configuration.configurations[config_file]
 
-    configuration = configparser.ConfigParser()
+    config_parser = configparser.ConfigParser()
     
     def update_config():
         with open(config_file, 'w') as f:
-            configuration.write(f)
+            config_parser.write(f)
 
     class _config_section_proxy():
         def __init__(self, section_key):
             self.section_key = section_key
 
         def __getitem__(self, key):
-            return configuration.__getitem__(self.section_key).__getitem__(key)
+            return config_parser.__getitem__(self.section_key).__getitem__(key)
 
         def __setitem__(self, key, value):
-            configuration.__getitem__(self.section_key).__setitem__(key, str(value))
+            config_parser.__getitem__(self.section_key).__setitem__(key, str(value))
             update_config()
 
         def __delitem__(self, key):
-            configuration.__getitem__(self.section_key).__delitem__(key)
+            config_parser.__getitem__(self.section_key).__delitem__(key)
             update_config()
 
         def __contains__(self, key):
-            return configuration.__getitem__(self.section_key).__contains__(key)
+            return config_parser.__getitem__(self.section_key).__contains__(key)
 
         def __repr__(self):
-            return configuration.__getitem__(self.section_key).__repr__()
+            return config_parser.__getitem__(self.section_key).__repr__()
 
     class _config_proxy():
         def __init__(self, config_file):
             syslog.info(f"init configuration for {config_file}")
-            configuration.read(config_file, encoding='utf-8')
+            config_parser.read(config_file, encoding='utf-8')
 
         def __getitem__(self, key):
             return _config_section_proxy(key)
 
         def __setitem__(self, key, value):
-            configuration.__setitem__(key, value)
+            config_parser.__setitem__(key, value)
             update_config()
 
         def __delitem__(self, key):
-            configuration.__delitem__(key)
+            config_parser.__delitem__(key)
             update_config()
 
         def __contains__(self, key):
-            return configuration.__contains__(key)
+            return config_parser.__contains__(key)
 
         def __repr__(self):
-            return f"Configuration proxy for {config_file} using {configuration.__repr__()}"
+            return f"Configuration proxy for {config_file} using {config_parser.__repr__()}"
     
     init_configuration.configurations[config_file] = _config_proxy(config_file)
 
