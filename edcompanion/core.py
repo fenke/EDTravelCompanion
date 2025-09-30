@@ -6,7 +6,9 @@
 __all__ = ['init_configuration']
 
 # %% ../nbs/00_core.ipynb 3
-import os, logging, configparser
+import os
+import logging
+import configparser
 
 # %% ../nbs/00_core.ipynb 4
 syslog = logging.getLogger(f"root.{__name__}")
