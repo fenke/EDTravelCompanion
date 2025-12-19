@@ -3,6 +3,8 @@ website:
     contents:
       - index.ipynb
       - 00_core.ipynb
+      - 02_threadworkers.ipynb
+      - 04_eddbreader.ipynb
       - section: blog
         contents:
           - section: posts
@@ -31,6 +33,7 @@ website:
               - linalg\iframe_figures\figure_59.html
               - linalg\iframe_figures\figure_65.html
               - linalg\iframe_figures\figure_66.html
+              - linalg\iframe_figures\figure_8.html
               - linalg\iframe_figures\figure_9.html
       - section: md
         contents:

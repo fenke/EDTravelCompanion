@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "../textit"
+		},
+		{
+			"path": "../configproxy"
 		}
 	],
 	"settings": {}
