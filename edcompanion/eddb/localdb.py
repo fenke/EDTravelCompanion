@@ -7,7 +7,7 @@ __all__ = ['SQLiteQueryParams', 'sqlite_query_params', 'SQLiteConnectionInterfac
            'sqllite_connection', 'create_systems_table', 'create_systems_indices', 'remove_duplicates',
            'convert_systems_dumpfile_to_csv', 'convert_dumpfile_in_thread']
 
-# %% ../../nbs/05_eddblocal.ipynb 5
+# %% ../../nbs/05_eddblocal.ipynb 4
 import sys, logging, typing 
 import os, csv, json, gzip, sqlite3
 import subprocess, queue, threading
@@ -20,20 +20,20 @@ from ..core import configuration
 from ..threadworkers import bind_queue_as_generator_blocking
 
 
-# %% ../../nbs/05_eddblocal.ipynb 8
+# %% ../../nbs/05_eddblocal.ipynb 7
 syslog = logging.getLogger(__name__)
 eddb_config = configuration["EDDB"]
 syslog.info(f"Loading module {__name__}, config={eddb_config}")
 
 
-# %% ../../nbs/05_eddblocal.ipynb 11
+# %% ../../nbs/05_eddblocal.ipynb 10
 class SQLiteQueryParams(NamedTuple):
     as_param: typing.Callable
     append_param: typing.Callable   
     get_params: typing.Callable  
 
 
-# %% ../../nbs/05_eddblocal.ipynb 12
+# %% ../../nbs/05_eddblocal.ipynb 11
 def sqlite_query_params(log=None) -> SQLiteQueryParams:
     sql_params = {}
 
@@ -57,7 +57,7 @@ def sqlite_query_params(log=None) -> SQLiteQueryParams:
         get_params=get_params
     )
 
-# %% ../../nbs/05_eddblocal.ipynb 14
+# %% ../../nbs/05_eddblocal.ipynb 13
 class SQLiteConnectionInterface(typing.NamedTuple):
     cursor: typing.Callable
     commit: typing.Callable
@@ -67,7 +67,7 @@ class SQLiteConnectionInterface(typing.NamedTuple):
     executemany: typing.Callable
 
 
-# %% ../../nbs/05_eddblocal.ipynb 16
+# %% ../../nbs/05_eddblocal.ipynb 15
 def sqllite_connection_interface(
         database:str=":memory:",
     ) -> SQLiteConnectionInterface:
@@ -114,7 +114,7 @@ def sqllite_connection_interface(
         executemany=execute_many
     )
 
-# %% ../../nbs/05_eddblocal.ipynb 18
+# %% ../../nbs/05_eddblocal.ipynb 17
 @contextmanager
 def sqllite_connection(*args, **kwargs):
     syslog.info(f"Opening connection-interface to {args}")
@@ -124,7 +124,7 @@ def sqllite_connection(*args, **kwargs):
     finally:
         interface.close()
 
-# %% ../../nbs/05_eddblocal.ipynb 25
+# %% ../../nbs/05_eddblocal.ipynb 24
 def create_systems_table(systems_databasefile, tablename='systems'):
 
     with sqllite_connection(systems_databasefile) as conn:
@@ -146,7 +146,7 @@ def create_systems_table(systems_databasefile, tablename='systems'):
         )
 
 
-# %% ../../nbs/05_eddblocal.ipynb 26
+# %% ../../nbs/05_eddblocal.ipynb 25
 def create_systems_indices(systems_databasefile, tablename='systems'):
 
     syslog.info(f"Adding indexes to {tablename} ...")
@@ -160,7 +160,7 @@ def create_systems_indices(systems_databasefile, tablename='systems'):
             conn.execute(sql)
 
 
-# %% ../../nbs/05_eddblocal.ipynb 27
+# %% ../../nbs/05_eddblocal.ipynb 26
 def remove_duplicates(systems_databasefile, tablename='systems', column='id64'):
 
     with sqllite_connection(systems_databasefile) as conn:
@@ -184,7 +184,7 @@ def remove_duplicates(systems_databasefile, tablename='systems', column='id64'):
         conn.execute(f"DROP INDEX IF EXISTS {index_name}")
         conn.execute(f"CREATE UNIQUE INDEX IF NOT EXISTS {index_name} ON {tablename} ({column})")
 
-# %% ../../nbs/05_eddblocal.ipynb 31
+# %% ../../nbs/05_eddblocal.ipynb 30
 def convert_systems_dumpfile_to_csv(infile, chunksize=128*1024*1024 ):
 
     with gzip.open(infile, 'rt') as jsonfile:
@@ -218,7 +218,7 @@ def convert_systems_dumpfile_to_csv(infile, chunksize=128*1024*1024 ):
                 break
 
 
-# %% ../../nbs/05_eddblocal.ipynb 35
+# %% ../../nbs/05_eddblocal.ipynb 34
 def convert_dumpfile_in_thread(infile, systems_databasefile, tablename):
     
     fn = queue.Queue()
