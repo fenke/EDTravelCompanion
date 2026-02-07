@@ -1,0 +1,26 @@
+project:
+  type: book
+
+book:
+  title: "companion-guide"
+  author: "Norah Jones"
+  date: "5-2-2026"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - edjournal.qmd
+    - summary.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+  pdf:
+    documentclass: scrreprt
+
+
+

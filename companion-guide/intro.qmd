@@ -1,0 +1,4 @@
+# Introduction
+
+Elite Dangerous is a Sci-Fi & space simulation, a distant descendant of the 1980's Elite. It features near limitless travel through and discover a galaxy modelled on our Milky-Way. Procedural generation of 400 billion star systems make the player aware of how really, really, awfully big our Galaxy is, let alone the universe.
+

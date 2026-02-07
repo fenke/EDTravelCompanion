@@ -1,0 +1,5 @@
+# Preface {.unnumbered}
+
+This is a Quarto book containing sourcecode related to the game Elite Dangerous.
+
+To learn more about Quarto books visit <https://quarto.org/docs/books>.

@@ -1,0 +1,310 @@
+---
+title: ED Journal 
+---
+
+# ED Journal
+
+> Processing journal events
+
+## Preparations
+
+### Setup QiTangle
+
+```{python}
+%reload_ext qitangle.entangle
+%tangle -f --lib edcompanion edcompanion.edjournal
+```
+
+```{python}
+%%entangle docstring
+"""Read events from Elite Dangerous logfiles"""
+```
+
+### Setup configuration
+
+```{python}
+from edcompanion.core import configuration
+```
+
+```{python}
+configuration["FOLDERS"]["ed_journals"]
+```
+
+### Setup logging
+```{python}
+import logging, collections
+```
+
+
+```{python}
+import sys, logging
+
+logging.basicConfig(
+    format="%(asctime)s\t%(levelname)s\t%(lineno)d\t%(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+    level=logging.INFO,
+    stream=sys.stderr
+)
+
+```
+
+
+```{python}
+%%entangle syslog logging
+syslog = logging.getLogger(__name__)
+```
+
+### Common imports
+
+{{< include _common_imports.qmd >}}
+
+
+```{python}
+%%entangle numpy docstring
+import numpy, numpy as np
+```
+
+```{python}
+#| echo: false
+%%entangle hashlib docstring
+import hashlib
+```
+
+
+```{python}
+%%entangle syslog logging
+syslog = logging.getLogger(__name__)
+```
+
+{{< include _journal.qmd >}}
+
+
+### Examples
+
+#### Track journals
+```{python}
+configuration["FOLDERS"]["ed_journal_archive"]
+```
+
+
+
+```{python}
+event_types = set()
+for j in track_journals(configuration["FOLDERS"]["ed_journal_archive"], backlog=133):
+    event_types.add(j.eventname)
+
+print(event_types)
+```
+
+
+#### Track location
+An example to track the location
+
+```{python}
+
+def create_location_tracker_example(update_location:typing.Callable):
+    current_location = ""
+    def visitor(events:EDJournalEventIterator_T) -> EDJournalEventIterator_T:
+        nonlocal current_location
+        for event in events:
+            if event.eventname in ['Location', 'FSDJump']:
+                event_location = event.event.get('StarSystem')
+                if event_location != current_location:
+                    current_location = event_location
+                    update_location(current_location)
+
+            yield event
+
+    return visitor
+
+```
+
+
+```{python}
+location_list = set()
+travel = create_location_tracker_example(location_list.add)
+consumed = collections.deque(
+    travel(track_journals(configuration["FOLDERS"]["ed_journal_archive"], backlog=13)),
+    0
+)
+print(location_list)
+```
+
+### Weird stuff
+
+```{python}
+def writable_generator():
+    value = None
+    while True:
+        # Yield the current value and wait for a new one
+        syslog.info(f"value = {value} waiting ....")
+        new_value = (yield value)
+        syslog.info(f"... continuing, new_value = {new_value}")
+        if new_value is not None:
+            value = new_value
+
+```
+
+
+```{python}
+# Create generator
+gen = writable_generator()
+```
+
+
+```{python}
+# Prime the generator (advance to first yield)
+print(next(gen))  # Output: None
+```
+
+
+```{python}
+# Send a new value into the generator
+print(gen.send(10))  # Output: 10
+```
+
+
+```{python}
+# Send another value
+print(gen.send(42))  # Output: 42
+```
+
+
+```{python}
+# Keep sending values
+print(gen.send("Hello"))  # Output: Hello
+
+```
+
+### Systems, FSD & location
+
+
+```{python}
+_star_position_t = numpy.ndarray
+
+```
+```{python}
+%%entangle create_location_tracker event_iterator_t edjournal_event_t
+def create_basic_location_tracker(update_location:typing.Callable[[str, numpy.ndarray, EDJournalEvent], None]):
+
+    current_location = ""
+    current_position = np.asarray([])
+
+    def visitor(events:EDJournalEventIterator_T) -> EDJournalEventIterator_T:
+        nonlocal current_location
+        for event in events:
+            if event.eventname in ['Location', 'FSDJump']:
+                event_location = event.event.get('StarSystem', None)
+                if event_location != current_location:
+                    current_location = event_location
+                    current_position = numpy.asarray(event.event.get('StarPos', []))
+                    update_location(current_location, current_position, event)
+
+            yield event
+
+    return visitor
+
+```
+
+### Ship, modules & materials
+
+### Scanning & signals
+
+
+### Utilities
+
+```{python}
+hash_obj = hashlib.md5("salted".encode("utf-8"))
+hash_obj, hash_obj.hexdigest()
+```
+
+```{python}
+c1 = hash_obj.copy()
+c1.update("text".encode("utf-8"))
+c1, c1.hexdigest()
+```
+
+```{python}
+c2 = hash_obj.copy().update("text".encode("utf-8"))
+c2
+```
+
+```{python}
+hash_obj, hash_obj.hexdigest()
+```
+
+```{python}
+hashlib.md5(json.dumps({
+    "timestamp": "2023-06-27T17:13:14Z",
+    "event": "Commander",
+    "FID": "F9569960",
+    "Name": "immerlicht"
+}).encode("utf-8")).hexdigest()
+```
+
+```{python}
+h = hashlib.md5("salt".encode("utf-8"))
+
+```
+
+```{python}
+h, h.hexdigest()
+```
+
+```{python}
+h.update("text".encode("utf-8"))
+```
+
+```{python}
+h, h.hexdigest()
+```
+
+```{python}
+%%entangle salted_event_hasher hashlib json edjournal_event_t
+
+def salted_event_hasher(salt:str) -> typing.Callable[[EDJournalEvent], hashlib._hashlib.HASH] :
+
+    def _hash(event:EDJournalEvent):
+        h = hashlib.md5(salt.encode("utf-8"))
+        h.update(event.eventname.encode("utf-8"))
+        h.update(str(event.timestamp).encode("utf-8"))
+        h.update(json.dumps(event.event).encode("utf-8"))
+                
+        return h
+
+    return _hash
+    
+```
+
+```{python}
+hash_from_event = salted_event_hasher("SALT is a movie with Angelina Jolie")
+hash_from_event
+
+```
+
+```{python}
+h = hash_from_event(EDJournalEvent(**{
+    "timestamp": "2023-06-27T17:13:14Z",
+    "eventname": "Commander",
+    "event": {
+        "FID": "F9569960",
+        "Name": "immerlicht"
+    }})
+)
+h.hexdigest()
+```
+
+## Journaling DB
+
+### Files & player
+
+```{python}
+%tangle -r salted_event_hasher track_journals
+```
+
+
+```{python}
+%tangle -e salted_event_hasher track_journals
+```
+
+
