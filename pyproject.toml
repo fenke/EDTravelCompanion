@@ -1,3 +1,56 @@
 [build-system]
-requires = ["setuptools>=64.0"]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=3.11,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "edcompanion"
+authors = [{name = "Fenke Meijer", email = "fenkemeijer@gmail.com"}]
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+readme = { file = "README.md", content-type = "text/markdown" }
+dynamic = ["version", "description"]
+requires-python = ">= 3.12"
+dependencies = [
+    "autopep8",
+    "numpy",
+    "pytz",
+    "python-dateutil",
+    "requests"
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Framework :: IPython",
+    "Framework :: Jupyter",
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3"
+]
+keywords = [
+    "ipython",
+    "magic",
+    "literate",
+    "programming", 
+    "scientific",
+    "markdown",
+    "reports", 
+    "documentation"
+]
+
+[project.urls]
+Home = "https://codeberg.org/fenke/exce"
+
+[tool.flit.sdist]
+exclude = ["companion/", "nbs/", "exce/"]
+
+[tool.flit.module]
+name = "edcompanion" 
+
+[tool.autopep8]
+max-line-length = 72
+indent-size = 4
+ignore = "E501" 
+in-place = true
+recursive = true
+verbose = true
+aggressive = 3
+
