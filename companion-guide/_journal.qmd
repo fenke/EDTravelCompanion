@@ -23,8 +23,10 @@ class EDJournalEvent(typing.NamedTuple):
 
 #### `create_edjournal_event_from_logevent`
 ```{python}
-%%entangle create_edjournal_event_from_logevent json edjournal_event_t make_datetime
-def create_edjournal_event_from_logevent(logged_line:str) -> EDJournalEvent:
+%%entangle create_edjournal_event json edjournal_event_t make_datetime
+
+def create_edjournal_event_(logged_line:str) -> EDJournalEvent:
+    
     logged_event = json.loads(logged_line)
     return EDJournalEvent(
         timestamp = make_datetime(logged_event.pop("timestamp")),
@@ -62,12 +64,35 @@ EDJournalEventIterator_T = typing.Iterator[EDJournalEvent]
 
 ### Reading journals
 
+#### `read_events`
+```{python}
+%%entangle read_events create_edjournal_event event_iterator_t syslog
+
+def read_events(filename:str, tail=True) -> EDJournalEventIterator_T:
+
+    with open(filename, encoding="utf-8") as journalfile:
+        syslog.debug(f"Opening logfile {filename}")
+
+        while True: 
+            line = journalfile.readline()
+
+            if not line:
+                if not tail: break
+                time.sleep(0.3)
+                continue
+
+            if len(line) < 5: continue
+
+            yield create_edjournal_event(line)
+
+```
+
 #### `read_journal`
 
 Generate event items from a logfile
 
 ```{python}
-%%entangle read_journal syslog ntpath json create_edjournal_event_from_logevent event_iterator_t
+%%entangle read_journal syslog ntpath json read_events event_iterator_t
 
 def read_journal(
     journal:str,    # path to journal file
@@ -85,43 +110,21 @@ def read_journal(
     try:
         syslog.debug(f"reading journal: {ntpath.basename(journal)}")
 
-        with open(journal, encoding="utf-8") as journalfile:
-            syslog.debug(f"Opening journal {journal}")
+        for event in read_events(journal, tail):
 
-            while True: 
-                line = journalfile.readline()
-
-                if not line:
-                    if tail:
-                        time.sleep(0.3)
-                        continue
-                    else:
-                        break
-
-                if len(line) < 5:
-                    continue
-
-                try:
-                    event = create_edjournal_event_from_logevent(line)
-
-                except json.decoder.JSONDecodeError as JX:
-                    syslog.exception("Exception: %s", JX, exc_info=True, stack_info=True)
-                    raise
-
-                if last_timestamp is None:
-                    yield EDJournalEvent(
-                        eventname = "JournalStart",
-                        timestamp = event.timestamp,
-                        event = dict(logfile = ntpath.basename(journal))
-                    )
-                   
-               
-                last_timestamp = event.timestamp
-                yield event
-        
-                if event.eventname == 'Shutdown':
-                    syslog.debug(f"SHUTDOWN {str(event.timestamp):22} {ntpath.basename(journal)}")
-                    break
+            if last_timestamp is None:
+                yield EDJournalEvent(
+                    eventname = "JournalStart",
+                    timestamp = event.timestamp,
+                    event = dict(logfile = ntpath.basename(journal))
+                )
+            
+            last_timestamp = event.timestamp
+            yield event
+    
+            if event.eventname == 'Shutdown':
+                syslog.debug(f"SHUTDOWN {str(event.timestamp):22} {ntpath.basename(journal)}")
+                break
 
         syslog.debug(f"Done reading journal: {journal}")
         yield EDJournalEvent(
@@ -144,7 +147,7 @@ def read_journal(
 
 #### `track_journals`
 ```{python}
-%%entangle track_journals syslog event_iterator_t read_journal list_journals_sorted functools
+%%entangle track_journals event_iterator_t read_journal list_journals_sorted functools
 
 def track_journals(
     journalpath:str, 

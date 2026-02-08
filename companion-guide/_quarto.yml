@@ -3,7 +3,7 @@ project:
 
 book:
   title: "companion-guide"
-  author: "Norah Jones"
+  author: "Fenke Meijer"
   date: "5-2-2026"
   chapters:
     - index.qmd
