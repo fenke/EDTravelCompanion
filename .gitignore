@@ -159,10 +159,13 @@ site_libs/
 index.quarto_ipynb
 iframe_figures/
 nbs/eddb/NavRoute.json
-.venv-3.12/
 _book/
 _site/
 _legacy/
 .quarto/
 
 /.luarc.json
+
+# Various
+nbs/test.csv
+.venv-3.12/

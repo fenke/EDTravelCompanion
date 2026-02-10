@@ -46,7 +46,7 @@ logging.basicConfig(
 
 ### Common imports
 
-{{< include _common_imports.qmd >}}
+{{< include includes/_common_imports.qmd >}}
 
 ## Journal
 
@@ -68,7 +68,7 @@ import hashlib
 ```
 
 
-{{< include _journal.qmd >}}
+{{< include includes/_journal.qmd >}}
 
 
 ### Examples
