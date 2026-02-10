@@ -1,13 +1,11 @@
 
 ### Common Imports
 ```{python}
-#| echo: false
 %%entangle os docstring
 import os
 ```
 
 ```{python}
-#| echo: false
 %%entangle datetime docstring
 import datetime
 ```
@@ -24,35 +22,29 @@ import pytz
 
 
 ```{python}
-#| echo: false
 %%entangle time docstring
 import time
 ```
 
 ```{python}
-#| echo: false
 %%entangle json docstring
 import json
 ```
 
 ```{python}
-#| echo: false
 %%entangle logging docstring
 import logging
 ```
 ```{python}
-#| echo: false
 %%entangle ntpath docstring
 import ntpath
 ```
 ```{python}
-#| echo: false
 %%entangle typing docstring
 import typing 
 
 ```
 ```{python}
-#| echo: false
 %%entangle functools docstring
 import functools
 ```
