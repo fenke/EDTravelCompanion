@@ -1,5 +1,6 @@
 ---
 title: ED Journal 
+include: true
 ---
 
 # ED Journal
@@ -11,12 +12,12 @@ title: ED Journal
 ### Setup QiTangle
 
 ```{python}
-%reload_ext qitangle.entangle
+%reload_ext qitangle.entangle 
 %tangle -f --lib edcompanion edcompanion.edjournal
 ```
 
 ```{python}
-%%entangle docstring
+%%entangle -f docstring
 """Read events from Elite Dangerous logfiles"""
 ```
 
@@ -24,17 +25,12 @@ title: ED Journal
 
 ```{python}
 from edcompanion.core import configuration
-```
-
-```{python}
-configuration["FOLDERS"]["ed_journals"]
+print(configuration["FOLDERS"]["ed_journals"])
 ```
 
 ### Setup logging
-```{python}
-import logging, collections
-```
 
+For the package, logging configuration is left to user of the package. 
 
 ```{python}
 import sys, logging
@@ -48,35 +44,29 @@ logging.basicConfig(
 
 ```
 
-
-```{python}
-%%entangle syslog logging
-syslog = logging.getLogger(__name__)
-```
-
 ### Common imports
 
 {{< include _common_imports.qmd >}}
 
+## Journal
+
 
 ```{python}
-%%entangle numpy docstring
+%%entangle -f syslog logging
+syslog = logging.getLogger(__name__)
+```
+
+```{python}
+%%entangle -f numpy docstring
 import numpy, numpy as np
 ```
 
 ```{python}
 #| echo: false
-%%entangle hashlib docstring
+%%entangle -f hashlib docstring
 import hashlib
 ```
 
-
-```{python}
-%%entangle syslog logging
-syslog = logging.getLogger(__name__)
-```
-
-## Journal
 
 {{< include _journal.qmd >}}
 
@@ -186,7 +176,7 @@ _star_position_t = numpy.ndarray
 
 ```
 ```{python}
-%%entangle create_location_tracker event_iterator_t edjournal_event_t
+%%entangle -f create_location_tracker event_iterator_t edjournal_event_t numpy
 def create_basic_location_tracker(update_location:typing.Callable[[str, numpy.ndarray, EDJournalEvent], None]):
 
     current_location = ""
@@ -262,7 +252,7 @@ h, h.hexdigest()
 ```
 
 ```{python}
-%%entangle salted_event_hasher hashlib json edjournal_event_t
+%%entangle -f salted_event_hasher hashlib json edjournal_event_t
 
 def salted_event_hasher(salt:str) -> typing.Callable[[EDJournalEvent], hashlib._hashlib.HASH] :
 
@@ -307,6 +297,10 @@ h.hexdigest()
 
 ```{python}
 %tangle -e salted_event_hasher track_journals
+```
+
+```{python}
+%tangle -r 
 ```
 
 

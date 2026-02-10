@@ -2,7 +2,7 @@
 
 
 ```{python}
-%%entangle syslog logging
+%%entangle -f syslog logging 
 syslog = logging.getLogger(__name__)
 ```
 
@@ -13,7 +13,7 @@ syslog = logging.getLogger(__name__)
 #### Event type
 
 ```{python}
-%%entangle edjournal_event_t typing
+%%entangle -f edjournal_event_t typing  
 class EDJournalEvent(typing.NamedTuple):
     timestamp: str
     eventname: str
@@ -23,9 +23,9 @@ class EDJournalEvent(typing.NamedTuple):
 
 #### `create_edjournal_event_from_logevent`
 ```{python}
-%%entangle create_edjournal_event json edjournal_event_t make_datetime
+%%entangle -f create_edjournal_event json edjournal_event_t make_datetime
 
-def create_edjournal_event_(logged_line:str) -> EDJournalEvent:
+def create_edjournal_event(logged_line:str) -> EDJournalEvent:
     
     logged_event = json.loads(logged_line)
     return EDJournalEvent(
@@ -45,7 +45,7 @@ Create iterators and processors so they can be chained
 An event visitors takes a generator as argument and is itself a generator, allowing them to be chained.
 
 ```{python}
-%%entangle event_visitor_t event_iterator_t
+%%entangle -f event_visitor_t event_iterator_t
 EventVisitor_T = typing.Callable[[EDJournalEventIterator_T], EDJournalEventIterator_T]
 
 ```
@@ -57,7 +57,7 @@ EventVisitor_T = typing.Callable[[EDJournalEventIterator_T], EDJournalEventItera
 As it's says, iteration over journal events
 
 ```{python}
-%%entangle event_iterator_t typing edjournal_event_t
+%%entangle -f event_iterator_t typing edjournal_event_t
 EDJournalEventIterator_T = typing.Iterator[EDJournalEvent]
 ```
 
@@ -66,7 +66,7 @@ EDJournalEventIterator_T = typing.Iterator[EDJournalEvent]
 
 #### `read_events`
 ```{python}
-%%entangle read_events create_edjournal_event event_iterator_t syslog
+%%entangle -f read_events create_edjournal_event event_iterator_t syslog
 
 def read_events(filename:str, tail=True) -> EDJournalEventIterator_T:
 
@@ -92,7 +92,7 @@ def read_events(filename:str, tail=True) -> EDJournalEventIterator_T:
 Generate event items from a logfile
 
 ```{python}
-%%entangle read_journal syslog ntpath json read_events event_iterator_t
+%%entangle -f read_journal syslog ntpath json read_events event_iterator_t
 
 def read_journal(
     journal:str,    # path to journal file
@@ -147,7 +147,7 @@ def read_journal(
 
 #### `track_journals`
 ```{python}
-%%entangle track_journals event_iterator_t read_journal list_journals_sorted functools
+%%entangle -f track_journals event_iterator_t read_journal list_journals_sorted functools
 
 def track_journals(
     journalpath:str, 
@@ -184,7 +184,7 @@ def track_journals(
 
 #### `list_journals_unsorted`
 ```{python}
-%%entangle list_journals_unsorted os
+%%entangle -f list_journals_unsorted os
 
 def list_journals_unsorted(journalpath:str)->typing.Iterator[str]:
     'Generator for journal file paths'
@@ -199,7 +199,7 @@ print(*list_journals_unsorted(configuration["FOLDERS"]["ed_journals"]), sep='\n'
 
 #### `list_journals_sorted`
 ```{python}
-%%entangle list_journals_sorted list_journals_unsorted
+%%entangle -f list_journals_sorted list_journals_unsorted
 
 def list_journals_sorted(journalpath:str)->list[str]:
 
