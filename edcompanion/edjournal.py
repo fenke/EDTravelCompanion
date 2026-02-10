@@ -45,20 +45,23 @@ syslog = logging.getLogger(__name__)
 # %% make_datetime ---------------------------------------------------
 
 def _make_datetime(d):
-    # use parser to convert from string representation
-    if isinstance(d, str):
+
+    if isinstance(d, str):  # parser converts from string
         return dateutil.parser.parse(d)
-    # ints and floats are asumed to be unix timestamps (seconds sinds 1/1/1970)
-    elif isinstance(d, int):
+
+    elif isinstance(d, int):  # ints as unix timestamps (sinds 1/1/1970)
         return datetime.datetime.fromtimestamp(d)
-    elif isinstance(d, float):
+
+    elif isinstance(d, float):  # floats as unix timestamps (sinds 1/1/1970)
         return datetime.datetime.fromtimestamp(d)
-    # for other cases use the object's string cast and parse that
-    else:
+
+    else:  # use the object's string cast and parse that
         return dateutil.parser.parse(str(d))
 
 
 def make_datetime(d, tz='UTC'):
+    """Make a timezone aware datetime from diverse representations"""
+
     _d = _make_datetime(d)
     if _d.tzinfo is None or _d.tzinfo.utcoffset(_d) is None:
         return pytz.timezone(tz).localize(_d)
@@ -68,7 +71,7 @@ def make_datetime(d, tz='UTC'):
 
 # %% create_edjournal_event ------------------------------------------
 
-def create_edjournal_event_(logged_line: str) -> EDJournalEvent:
+def create_edjournal_event(logged_line: str) -> EDJournalEvent:
 
     logged_event = json.loads(logged_line)
     return EDJournalEvent(
@@ -186,9 +189,9 @@ def track_journals(
         logfiles = list_journals_sorted(journalpath)
 
         if isinstance(backlog, int):
-            backlog = min(backlog, len(logfiles)-1)
+            backlog = min(backlog, len(logfiles) - 1)
             syslog.debug(f"Reading journals, backlog = {backlog}")
-            for f in logfiles[-(1+backlog):]:
+            for f in logfiles[-(1 + backlog):]:
                 yield from read_journal(f, tail=False)
 
         elif isinstance(backlog, str):
