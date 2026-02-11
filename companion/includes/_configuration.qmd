@@ -1,0 +1,29 @@
+
+### Configuration
+
+#### `get_configuration`
+
+
+Reads the configuration file into a convenient proxy object with a dict-like interface.
+
+```{python}
+%%entangle -f get_configuration confproxy
+
+def get_configuration():
+    """Get the general configuration file for EDTravelCompanion"""
+    return init_configuration(
+        get_config_path('EDTravelCompanion'),  
+        'settings.ini'
+    )
+
+```
+
+```{python}
+%%entangle confproxy docstring
+from confproxy.ini import get_config_path, init_configuration
+```
+
+
+```{python}
+%tangle -m
+```

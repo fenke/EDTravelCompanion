@@ -1,0 +1,207 @@
+
+
+### EDDB Systems 
+
+#### `create_systems_table`
+```{python}
+%%entangle create_systems_table syslog
+
+def create_systems_table(connection, tablename='systems'):
+    syslog.debug(f"Creating table {tablename} ...")
+    connection.execute(f"""
+        CREATE TABLE IF NOT EXISTS {tablename} (
+            id64 BIGINT NOT NULL,
+            x DOUBLE PRECISION  NOT NULL,
+            y DOUBLE PRECISION  NOT NULL,
+            z DOUBLE PRECISION  NOT NULL,
+            name TEXT NOT NULL
+        ); """
+    )
+
+```
+
+#### `create_systems_indices`
+
+```{python}
+%%entangle create_systems_indices
+def create_systems_indices(connection, tablename='systems', columns=None):
+
+    for col in ["id64", "x", "y", "z", "name"] if columns is None else columns:
+        syslog.debug(f"Create index on {tablename} ({col})")
+        connection.execute(f"CREATE INDEX IF NOT EXISTS {create_index_name(tablename, col)} ON {tablename} ({col})")
+
+```
+
+### EDDB dump files
+
+#### `import_systems_dump`
+
+```{python}
+%%entangle import_systems_dump os convert_systems_dumpfile_to_csv  
+
+def import_systems_dump(database, dumpfile):
+
+    syslog.debug(f"{database}, {dumpfile}")
+    update_systems_from_temp(
+        database, import_systems_csv_temp(
+            database, convert_systems_dumpfile_to_csv(
+                dumpfile, chunksize=256*1024*1024)))
+
+```
+
+
+
+#### `convert_systems_dumpfile_to_csv`
+```{python}
+%%entangle convert_systems_dumpfile_to_csv gzip csv typing item_to_system_row syslog
+
+def convert_systems_dumpfile_to_csv(
+    infile, 
+    chunksize=128*1024*1024 
+) -> typing.Iterator[str]:
+
+    syslog.debug(f"Reading {infile} in {chunksize} byte chunks...")
+
+    with gzip.open(infile, 'rt') as jsonfile:
+        chunknr = 0
+
+        while True:
+
+            chunk = jsonfile.readlines(chunksize)
+            if chunk:
+
+                csv_filename = infile.replace('.json.gz', f'_{chunknr:05d}.csv')
+                syslog.debug(f"Writing {csv_filename}")
+
+                linenr = 0
+
+                with open(csv_filename, 'w', newline='') as csvfile:
+
+                    writer = csv.writer(csvfile, delimiter=',',
+                                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+
+
+                    for line in chunk:
+                        if len(line) > 4:
+                            item = json.loads(line.rstrip(',\n\r '))
+                            writer.writerow( item_to_system_row(item) )
+                        else:
+                            syslog.debug(f"Short line {linenr} [{len(line)}] in chunk {chunknr}")
+
+                        linenr += 1
+                
+                    syslog.debug(f"Got and wrote {linenr} lines to {csv_filename}")
+                
+                chunknr += 1
+                yield csv_filename
+
+            else:
+                syslog.debug(f"Empty chunk {chunknr}")
+                break
+
+```
+
+
+#### `item_to_system_row` 
+```{python}
+%%entangle item_to_system_row
+
+def item_to_system_row(item:dict) -> tuple:
+    coords = item.get('coords',{})
+    return item.get('id64'), coords['x'], coords['y'], coords['z'], item.get('name')
+
+```
+
+
+#### `import_systems_csv_temp`
+
+```{python}
+%%entangle import_systems_csv_temp os sqlite_connection create_systems_table import_csv_to_sqlite
+
+def import_systems_csv_temp(database, csv_filenames):
+
+    for filename in csv_filenames:
+        temp_table =  os.path.split(filename)[1].split('.')[0]
+        syslog.debug(f"Import {filename} to {temp_table}")
+
+        with sqlite_connection(database) as connection:
+            drop_table(connection, temp_table)
+            create_systems_table(connection, temp_table)
+            connection.commit()
+
+        import_csv_to_sqlite(database, filename, temp_table)
+        
+        syslog.debug(f"Remove {filename}")
+        os.remove(filename)
+
+        yield temp_table
+
+```
+
+
+#### `update_systems_from_temp`
+
+```{python}
+%%entangle update_systems_from_temp sqlite_connection drop_table create_index
+
+def update_systems_from_temp(database, temp_tables):
+
+    for temp_table in temp_tables:
+
+        with sqlite_connection(database) as connection:
+
+            syslog.debug(f"Create index on {temp_table}")
+            create_index(connection, temp_table, 'id64')
+            connection.commit()
+
+            remove_duplicates(connection, temp_table, 'id64')
+            connection.commit()
+
+            syslog.debug(f"Update systems from {temp_table} ")
+            connection.execute(f"""
+                    INSERT INTO systems (id64, x, y, z, name)
+                    SELECT t.id64, t.x, t.y, t.z, t.name
+                    FROM {temp_table} t 
+                    LEFT JOIN systems s 
+                    ON t.id64 = s.id64
+                    WHERE t.id64 is not null and s.id64 is null;
+
+                """)
+
+            connection.commit()
+
+            drop_table(connection, temp_table)
+            connection.commit()
+
+```
+
+
+### Imports
+
+```{python}
+%%entangle os
+import os
+```
+```{python}
+%%entangle typing
+import typing
+```
+
+```{python}
+%%entangle csv
+import csv
+```
+
+```{python}
+%%entangle subprocess
+import subprocess
+```
+
+```{python}
+%%entangle gzip
+import gzip
+```
+
+```{python}
+%tangle -m
+```

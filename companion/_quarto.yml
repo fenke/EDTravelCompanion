@@ -9,6 +9,7 @@ book:
     - index.qmd
     - intro.qmd
     - edjournal.qmd
+    - eddblocal.qmd
     - summary.qmd
     - references.qmd
 
@@ -18,6 +19,7 @@ filters:
   
 format:
   html:
+    toc-depth: 4
     theme:
       - cosmo
       - brand

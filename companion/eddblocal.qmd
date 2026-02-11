@@ -1,0 +1,126 @@
+---
+title: "EDDB - Elite Dangeraous Data Base"
+---
+
+# Local EDDB
+
+## Preparations
+
+### Setup QiTangle
+
+```{python}
+%reload_ext qitangle.entangle 
+%tangle -f --lib edcompanion edcompanion.eddblocal
+```
+
+```{python}
+%%entangle -f docstring
+"""Local Elite Dangerous Database"""
+```
+
+### Setup logging
+
+For the package, logging configuration is left to user of the package. 
+
+```{python}
+%%entangle logging docstring
+import logging
+```
+
+```{python}
+import sys, os, json
+
+logging.basicConfig(
+    format="%(asctime)s %(levelname)-8.8s %(funcName)-20.20s %(lineno)-4.4d %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+    level=logging.DEBUG,
+    stream=sys.stderr
+)
+
+```
+
+```{python}
+%%entangle syslog logging
+syslog = logging.getLogger(__name__)
+syslog.info(f"Running {sys.executable}")
+syslog.info(f"...from {os.getcwd()}")
+```
+
+## Configuration
+
+{{< include includes/_configuration.qmd >}}
+
+
+
+## SQLite
+
+{{< include includes/_sqlite.qmd >}}
+
+### Testing sqlite connection
+
+```{python}
+with sqlite_connection() as ci:
+    print(type(ci))
+    ci.execute("CREATE TABLE lang(name, first_appeared)")
+
+    # This is the named style used with executemany():
+    data = (
+        {"name": "C", "year": 1972},
+        {"name": "Fortran", "year": 1957},
+        {"name": "Python", "year": 1991},
+        {"name": "Go", "year": 2009},
+    )
+    ci.executemany("INSERT INTO lang VALUES(:name, :year)", data)
+    for r in ci.execute("SELECT * FROM lang"):
+        print(r)
+        
+    # This is the qmark style used in a SELECT query:
+    params = (1972,)
+
+    for r in ci.execute("SELECT * FROM lang WHERE first_appeared = :year", {'year':1957}):
+        print(r)
+
+```
+
+## EDDB Local 
+
+{{< include includes/_eddblocal.qmd >}}
+
+```{python}
+eddb_config = get_configuration()["EDDB"]
+print(eddb_config['local_data_folder'], eddb_config['main_database'])
+```
+
+
+```{python}
+systems_databasefile = os.path.join(eddb_config['local_data_folder'], 'test_' + eddb_config['main_database'])
+print(systems_databasefile)
+```
+
+```{python}
+infile = os.path.join(eddb_config['local_dumps'], eddb_config['systems_1week'])
+print(infile)
+```
+
+```{python}
+import_systems_dump(systems_databasefile, infile)
+```
+
+
+
+### Star types
+
+```{python}
+star_types_file = os.path.join(eddb_config['local_data_folder'], 'star_types.json')
+star_types = {}
+with open(star_types_file,'rt') as jsonfile:
+    star_types.update(json.load(jsonfile))
+
+```
+
+## Checks & export
+
+
+```{python}
+%tangle -me
+```

@@ -21,11 +21,11 @@ include: true
 """Read events from Elite Dangerous logfiles"""
 ```
 
-### Setup configuration
+{{< include includes/_configuration.qmd >}}
 
 ```{python}
-from edcompanion.core import configuration
-print(configuration["FOLDERS"]["ed_journals"])
+#| include: false
+configuration = get_configuration()
 ```
 
 ### Setup logging

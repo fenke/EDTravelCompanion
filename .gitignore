@@ -169,3 +169,5 @@ _legacy/
 # Various
 nbs/test.csv
 .venv-3.12/
+companion/*_files/
+companion/*.html

@@ -1,0 +1,296 @@
+
+### SQLite support functions
+
+#### `sqllite_connection`
+
+Thin wrapper around sqlite3.connect to accomodate differences between versions. 
+
+```{python}
+%%entangle sqlite_connection sqlite3 contextlib sys syslog
+
+@contextlib.contextmanager
+def sqlite_connection(database:str=":memory:", **kwargs) -> sqlite3.Connection:
+    syslog.debug(f"Opening sqlite connection to {database}")
+
+    vi = sys.version_info
+    assert vi.major >= 3, f"Python >= 3.0 required. Found {vi.major}.{vi.minor}.{vi.micro}"
+
+    if vi.minor > 11:   
+        syslog.debug("Using legacy autocommit")
+        connection = sqlite3.connect(database, autocommit=sqlite3.LEGACY_TRANSACTION_CONTROL, isolation_level='DEFERRED')
+    else:
+        syslog.debug("Using isolation_level=None")
+        connection = sqlite3.connect(database, isolation_level=None)
+
+    try:
+        yield connection
+
+    finally:
+        syslog.debug(f"Closing connection to {database}")
+        connection.close()
+```
+
+
+#### `sqlite_params`
+
+Usefull while constructing queries, create the params object and add parameters to it, the 
+return value of  `append_param` is formatted for use in the sql querytext.
+
+```{python}
+%%entangle -f sqlite_params sqlite_params typing
+
+class SQLiteQueryParams(typing.NamedTuple):
+    as_param: typing.Callable[[str], str]
+    append_param: typing.Callable [[str, typing.Any], str]  
+    get_params: typing.Callable[[], dict[str,str]]  
+
+
+def sqlite_params(log_func:typing.Callable[[typing.Any], None]=None) -> SQLiteQueryParams:
+    
+    sql_params = dict[str, str]()
+
+    def as_param(name:str) -> str:
+        return f":{str(name)}"
+   
+    def append_param(name:str, value:typing.Any) -> str:
+        assert str(name) not in sql_params, f"Duplicate parameter {name}"
+        assert len(sql_params) < 32766, "SQLite does not allow more then approx. 32k bound parameters"
+
+        last_name = str(name)
+        sql_params[last_name] = value
+        return as_param(last_name)
+    
+    def get_params() -> dict[str, str]:
+        return sql_params.copy()
+    
+    return SQLiteQueryParams(
+        as_param=as_param,
+        append_param=append_param if log_func is None else lambda p: log_func(append_param(p)),
+        get_params=get_params
+    )
+```
+
+### Database - generic
+
+#### `drop_table`
+
+```{python}
+%%entangle drop_table sqlite3
+def drop_table(connection:sqlite3.Connection, tablename:str):
+
+    syslog.debug(f"Dropping table {tablename} ...")
+    connection.execute(f"DROP TABLE IF EXISTS {tablename};")
+
+```
+
+#### `drop_index`
+```{python}
+%%entangle drop_index sqlite3 create_index_name
+
+def drop_index(connection:sqlite3.Connection, tablename:str, column:str='id64'):
+
+    index_name = create_index_name(tablename, column)
+    syslog.debug(f"Dropping index {index_name} on {tablename} {column} ...")
+    connection.execute(f"DROP INDEX IF EXISTS {index_name}")
+
+```
+
+
+
+#### `create_index`
+```{python}
+%%entangle create_index sqlite3 create_index_name
+
+def create_index(
+    connection:sqlite3.Connection, 
+    tablename:str, column:str='id64'
+):
+
+    index_name = create_index_name(tablename, column)
+    syslog.debug(f"Adding index {index_name} on {tablename} {column} ...")
+    connection.execute(f"DROP INDEX IF EXISTS {index_name}")
+    connection.execute(f"CREATE INDEX IF NOT EXISTS {index_name} ON {tablename} ({column})")
+
+```
+
+
+#### `exists_index`
+```{python}
+%%entangle exists_index sqlite3 create_index_name
+
+def exists_index(
+    connection:sqlite3.Connection, 
+    tablename:str, column:str='id64', unique:bool=False
+):
+
+    syslog.debug(f"Checking for index on {tablename} {column} ...")
+
+    params = sqlite_params()
+    query_text = f"""
+        SELECT name 
+        FROM sqlite_master
+        WHERE type = 'index'
+        AND   tbl_name = {params.append_param('tblname', tablename)}
+        AND   name = {params.append_param('idxname', create_index_name(tablename, column, unique))}
+        LIMIT 1;
+    """
+    cursor = connection.cursor()
+    cursor.execute(query_text, params.get_params())
+    return any(cursor)
+
+```
+
+
+
+
+#### `drop_unique_index`
+```{python}
+%%entangle drop_unique_index sqlite3 create_index_name
+
+def drop_unique_index(connection:sqlite3.Connection, tablename:str, column:str='id64'):
+
+    index_name = create_index_name(tablename, column, True)
+    syslog.debug(f"Dropping index {index_name} on {tablename} {column} ...")
+    connection.execute(f"DROP INDEX IF EXISTS {index_name}")
+
+```
+
+#### `create_unique_index`
+```{python}
+%%entangle create_unique_index sqlite3 create_index_name
+
+def create_unique_index(connection:sqlite3.Connection, tablename:str, column:str='id64'):
+
+    index_name = create_index_name(tablename, column, True)
+    syslog.debug(f"Adding unique index {index_name} on {tablename} {column} ...")
+    connection.execute(f"DROP INDEX IF EXISTS {index_name}")
+    connection.execute(f"CREATE UNIQUE INDEX IF NOT EXISTS {index_name} ON {tablename} ({column})")
+
+```
+
+
+#### `remove_duplicates`
+```{python}
+%%entangle remove_duplicates sqlite3 create_index_name 
+def remove_duplicates(connection, tablename:str, column:str()='id64'):
+
+    if exists_index(connection, tablename, column, True):
+        syslog.warning(f"Found unique index on {tablename}.{column}")
+        return
+
+    syslog.info(f"Removing duplicates by id on {tablename}.{column}")
+
+    # create temporary index
+    if not exists_index(connection, tablename, column):
+        temp_index_name = f"temp_{create_index_name(tablename, column)}"
+    else:
+        temp_index_name = ''
+    
+    if temp_index_name:
+        connection.execute(f"CREATE INDEX IF NOT EXISTS {temp_index_name} ON {tablename} ({column})")
+
+    # remove duplicates 
+    connection.execute(f"""
+            DELETE FROM {tablename}
+            WHERE rowid NOT IN (
+                SELECT MIN(rowid)
+                FROM {tablename}
+                GROUP BY {column}
+            ); """
+    )
+
+    # remove temp index
+    if temp_index_name:
+        connection.execute(f"DROP INDEX IF EXISTS {temp_index_name}")
+
+```
+
+
+#### `create_index_name`
+```{python}
+%%entangle create_index_name
+def create_index_name(table_name, column, unique=False):
+    name = f"idx_{table_name}_{column}" 
+    return f"unique_{name}" if unique else name
+```
+
+
+#### `import_csv_to_sqlite`
+
+```{python}
+%%entangle import_csv_to_sqlite subprocess syslog
+
+def import_csv_to_sqlite(
+    database_file, csv_filename, tablename
+) -> subprocess.CompletedProcess:
+
+    filename = csv_filename.replace("\\","/")
+    syslog.info(f"Importing {filename} to {tablename}")
+
+    return subprocess.run([
+        "sqlite3",
+        database_file,
+        ".mode csv",
+        ".headers on",
+        f'.import "{filename}" {tablename}',
+        ".quit"
+    ], capture_output=True)
+    
+```
+
+#### `export_sqlite_to_csv`
+
+```{python}
+%%entangle export_sqlite_to_csv subprocess syslog
+def export_sqlite_to_csv(
+    database_file, csv_filename, tablespec
+) -> subprocess.CompletedProcess:
+
+    filename = csv_filename.replace("\\","/")
+    syslog.info(f"Exporting {tablespec} to {filename}")
+
+    return subprocess.run([
+        "sqlite3",
+        database_file,
+        ".mode csv",
+        ".headers on",
+        f'.output "{filename}" ',
+        f'select * from {tablespec};',
+        ".quit"
+
+    ], capture_output=True)
+
+```
+
+
+
+### Used imports
+
+```{python}
+%%entangle sys docstring
+import sys
+```
+
+```{python}
+%%entangle typing docstring
+import typing
+```
+
+```{python}
+%%entangle sqlite3 docstring
+import sqlite3
+```
+
+```{python}
+%%entangle contextlib docstring
+import contextlib
+```
+
+```{python}
+%%entangle subprocess
+import subprocess
+```
+
+```{python}
+%tangle -m
+```
